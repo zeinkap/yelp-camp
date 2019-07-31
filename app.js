@@ -1,21 +1,14 @@
-const express = require("express"),
-	  app = express(),
-	  bodyParser = require("body-parser"),
-	  mongoose = require("mongoose");
-
-// mongoose.connect('mongodb+srv://zeinkap:Zkap9611@cluster0-f0jxn.mongodb.net/test?retryWrites=true&w=majority', {
-// 	useNewUrlParser: true,
-// 	useCreateIndex: true
-// }).then(() => {
-// 		console.log('Connected to DB');
-// }).catch((err) => {
-// 	console.log('Error: ', err.message);
-// });
+const express 		= require("express"),
+app 				= express(),
+bodyParser 			= require("body-parser"),
+methodOverride 		= require("method-override"),
+mongoose 			= require("mongoose");
 
 // APP CONFIG
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});	// to get rid of warning errors
 //app.use(express.static("public"));	//used to serve your own custom css 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));	//argument is what to look for in url
 app.set("view engine", "ejs"); 
 
 // MONGOOSE/MODEL CONFIG
@@ -42,7 +35,6 @@ let Campground = mongoose.model("Campground", campgroundSchema);
 // 	}
 // });
 
-
 app.get("/", (req, res) => {
     res.redirect("/campgrounds");
 });
@@ -67,13 +59,8 @@ app.get("/campgrounds/new", (req, res) => { //this route is where form will be s
 
 // 3. CREATE route - add new campground to DB
 app.post("/campgrounds", (req, res) => {     //not same as GET, we are following REST convention format
-    //get data from form
-    let name = req.body.name;
-	let image = req.body.image;
-	let description = req.body.description;
-	let newCampground = {name: name, image: image, description: description};	//created object 
 	// Create a new campground and save to DB
-	Campground.create(newCampground, (err, newlyCreated) => {
+	Campground.create(req.body.campground, (err, newCampground) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {
 			console.log("There is an error!");
 			console.log(err);
@@ -90,6 +77,7 @@ app.get("/campgrounds/:id", (req, res) => {
 		if(err) {
 			console.log("There is an error!");
 			console.log(err);
+			res.redirect("/campgrounds");
 		} else {
 			//render show template with that campground
 			res.render("show", {campground: foundCampground});	//campground is just name we give, more importantly the value of id we found will be displayed
@@ -99,10 +87,12 @@ app.get("/campgrounds/:id", (req, res) => {
 
 // 5. EDIT route - editing a campground
 app.get("/campgrounds/:id/edit", (req, res) => {
+	//need to find that campground data from id so it prefills form
 	Campground.findById(req.params.id, (err, foundCampground) => {
 		if(err) {
 			console.log("There is an error!");
 			console.log(err);
+			res.redirect("/campgrounds");
 		} else {
 			res.render("edit", {campground: foundCampground});
 		}
@@ -111,10 +101,12 @@ app.get("/campgrounds/:id/edit", (req, res) => {
 
 // 6. UPDATE route - updating details of an existing campground
 app.put("/campgrounds/:id", (req, res) => {
-	Campground.findByIdAndUpdate(req.params.id, (err, updateCampground) => {
+	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form
+	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updateCampground) => {
 		if(err) {
 			console.log("There is an error!");
 			console.log(err);
+			res.redirect("/campgrounds");
 		} else {
 			res.redirect("/campgrounds/" + req.params.id);
 		}
