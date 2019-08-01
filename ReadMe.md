@@ -41,3 +41,11 @@
 - NEW which is /dogs/new GET request that displays form to make a new dog
 - CREATE which is /dogs POST request that adds new dog to DB
 - SHOW /dogs/:id GET request that shows info about one dog
+- EDIT
+- UPDATE
+- DESTROY
+
+# Final Updates
+* Sanitize blog body. This helps us to prevent user from entering html code into our inputs. Done in CREATE and UPDATE routes.
+* Style index
+* Update REST Table

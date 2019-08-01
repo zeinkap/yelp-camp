@@ -1,14 +1,17 @@
 const express 		= require("express"),
 app 				= express(),
 bodyParser 			= require("body-parser"),
+request 			= require("request");
 methodOverride 		= require("method-override"),
+expressSanitizer	= require("express-sanitizer"),
 mongoose 			= require("mongoose");
 
 // APP CONFIG
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});	// to get rid of warning errors
-//app.use(express.static("public"));	//used to serve your own custom css 
+app.use(express.static("public"));	// for express to use stylesheet in public folder  
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
+app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
 
 // MONGOOSE/MODEL CONFIG
@@ -59,7 +62,9 @@ app.get("/campgrounds/new", (req, res) => { //this route is where form will be s
 
 // 3. CREATE route - add new campground to DB
 app.post("/campgrounds", (req, res) => {     //not same as GET, we are following REST convention format
-	// Create a new campground and save to DB
+	//sanitizer here
+	req.body.campground.description = req.sanitize(req.body.campground.description);	//taking what its equal to and sanitizing it
+	// Create campground and save to DB
 	Campground.create(req.body.campground, (err, newCampground) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {
 			console.log("There is an error!");
@@ -101,6 +106,7 @@ app.get("/campgrounds/:id/edit", (req, res) => {
 
 // 6. UPDATE route - updating details of an existing campground
 app.put("/campgrounds/:id", (req, res) => {
+	req.body.campground.description = req.sanitize(req.body.campground.description);
 	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form
 	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updateCampground) => {
 		if(err) {
@@ -119,6 +125,7 @@ app.delete("/campgrounds/:id", (req, res) => {
 		if(err) {
 			console.log("There is an error!");
 			console.log(err);
+			res.redirect("/campgrounds");
 		} else {
 			res.redirect("/campgrounds");
 		}
