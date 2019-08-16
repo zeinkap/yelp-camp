@@ -8,7 +8,7 @@ mongoose 			= require("mongoose");
 
 // APP CONFIG
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});	// to get rid of warning errors
-app.use(express.static("public"));	// for express to use stylesheet in public folder  
+app.use(express.static("public"));	// to tell express to also look in public directory for custom css/js files 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
@@ -130,6 +130,10 @@ app.delete("/campgrounds/:id", (req, res) => {
 			res.redirect("/campgrounds");
 		}
 	});
+});
+
+app.get("*", (req, res) => {
+	res.send("Error. Page not found");
 });
 
 app.listen(3000, () => {

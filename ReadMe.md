@@ -6,10 +6,11 @@
 # Each campground will have:
 * Name
 * Image
+* description
 
 # For layout and styling
 * Create our header and footer partials
-* Add in Bootstrap
+* Add in Bootstrap styling
 
 # Creating new campgrounds
 * Setup new campground POST route
@@ -28,7 +29,7 @@
 # Add Mongoose
 * Install and configure mongoose
 * Setup campground model
-* Use campground model inside of our routes!
+* Use campground model inside of our routes
 
 # Show page
 * Review the RESTful routes
