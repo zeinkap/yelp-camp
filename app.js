@@ -1,10 +1,12 @@
-const express 		= require("express"),
-app 				= express(),
-bodyParser 			= require("body-parser"),
-request 			= require("request");
-methodOverride 		= require("method-override"),
-expressSanitizer	= require("express-sanitizer"),
-mongoose 			= require("mongoose");
+const	express 			= require("express"),
+		app 				= express(),
+		bodyParser 			= require("body-parser"),
+		request 			= require("request");
+		methodOverride 		= require("method-override"),
+		expressSanitizer	= require("express-sanitizer"),
+		mongoose 			= require("mongoose");
+		Campground 			= require("./models/campground");
+		seedDB				= require("./seeds");
 
 // APP CONFIG
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});	// to get rid of warning errors
@@ -14,13 +16,7 @@ app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
 
-// MONGOOSE/MODEL CONFIG
-const campgroundSchema = new mongoose.Schema({
-	name: String,
-	image: String,
-	description: String
-});
-let Campground = mongoose.model("Campground", campgroundSchema);
+seedDB();
 
 //adds campground to DB
 // Campground.create(
@@ -47,7 +43,6 @@ app.get("/campgrounds", (req, res) => {
 	//rather than getting from array we will retrieve camps from DB
 	Campground.find({}, (err, campgrounds) => {	//campgrounds here is placeholder for the data coming back from DB from out .find
 	if(err) {
-		console.log("There is an error!");
 		console.log(err);
 	} else {
 		res.render("index", {campgrounds : campgrounds});	//rendering index file along with the data sent under the first name campgrounds
@@ -67,7 +62,6 @@ app.post("/campgrounds", (req, res) => {     //not same as GET, we are following
 	// Create campground and save to DB
 	Campground.create(req.body.campground, (err, newCampground) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {
-			console.log("There is an error!");
 			console.log(err);
 		} else {
 			res.redirect("/campgrounds");   //event though there are 2 of these routes, it will redirect to GET by default
@@ -77,10 +71,10 @@ app.post("/campgrounds", (req, res) => {     //not same as GET, we are following
 
 // 4. SHOW route - shows info about a specific campground. ***This should always come after NEW route or else it will overide it. id comes from mongo DB
 app.get("/campgrounds/:id", (req, res) => {	
-	//find campground with provided ID from url and use mongoose function findbyid
-	Campground.findById(req.params.id, (err, foundCampground) => {	//foundCampground serves as placeholder for our data that we get back from DB
+	//find campground with provided ID from url and using mongoose function findbyid
+	//populating comments array (which was associated with campground) so it's not just an id
+	Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {	//foundCampground serves as placeholder for our data that we get back from DB
 		if(err) {
-			console.log("There is an error!");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
@@ -95,7 +89,6 @@ app.get("/campgrounds/:id/edit", (req, res) => {
 	//need to find that campground data from id so it prefills form
 	Campground.findById(req.params.id, (err, foundCampground) => {
 		if(err) {
-			console.log("There is an error!");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
@@ -110,7 +103,6 @@ app.put("/campgrounds/:id", (req, res) => {
 	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form
 	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updateCampground) => {
 		if(err) {
-			console.log("There is an error!");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
@@ -123,7 +115,6 @@ app.put("/campgrounds/:id", (req, res) => {
 app.delete("/campgrounds/:id", (req, res) => {
 	Campground.findByIdAndRemove(req.params.id, (err) => {
 		if(err) {
-			console.log("There is an error!");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
@@ -133,7 +124,7 @@ app.delete("/campgrounds/:id", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-	res.send("Error. Page not found");
+	res.send("Error! Page not found");
 });
 
 app.listen(3000, () => {

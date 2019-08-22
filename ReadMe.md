@@ -50,3 +50,15 @@
 * Sanitize blog body. This helps us to prevent user from entering html code into our inputs. Done in CREATE and UPDATE routes.
 * Style index
 * Update REST Table
+
+# Refactor mongoose code
+* Create models directory and use module.exports
+* Require everything correctly!
+
+# Add Seeds file
+* Add a seeds.js file 
+* Run the seeds file every time starts
+
+# Add the Comment model!
+* Fix errors
+* Display comments on campground show page!

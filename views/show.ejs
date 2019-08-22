@@ -19,5 +19,12 @@
     </div>
 </div>
 
+<div class="container">
+    <%campground.comments.forEach(function(comment) { %>
+        <p>
+            <strong><%=comment.author%></strong> - <%=comment.text%>
+        </p>
+    <%});%>
+</div>
 
 <% include partials/footer %>
