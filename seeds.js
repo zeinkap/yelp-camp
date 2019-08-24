@@ -5,7 +5,8 @@ const Campground = require("./models/campground");
 const Comment = require("./models/comment");
 
 // add some campgrounds data in array
-let data = [{
+let data = [
+    {
         name: "Cloud's nest",
         image: "http://www.camp-liza.com/wp-content/uploads/2017/10/20170708_093155_HDR-1.jpg",
         description: "This is like a dream sky nest!"
@@ -36,9 +37,9 @@ function seedDB() {
                     console.log(err);
                 } else {
                     console.log("added a campground");
-                    //adding comment. This same comment will be added to all campgrounds.
+                    //create a comment. This same comment will be added to all campgrounds.
                     Comment.create({
-                        text: "This place looks great. Looking forward to book it",
+                        text: "This place looks great. Looking forward to swimming, rolling, hiking and camping in it",
                         author: "Homer"
                     }, (err, comment) => {
                         if (err) {

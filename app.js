@@ -6,6 +6,7 @@ const	express 			= require("express"),
 		expressSanitizer	= require("express-sanitizer"),
 		mongoose 			= require("mongoose");
 		Campground 			= require("./models/campground");
+		Comment				= require("./models/comment");
 		seedDB				= require("./seeds");
 
 // APP CONFIG
@@ -45,14 +46,14 @@ app.get("/campgrounds", (req, res) => {
 	if(err) {
 		console.log(err);
 	} else {
-		res.render("index", {campgrounds : campgrounds});	//rendering index file along with the data sent under the first name campgrounds
+		res.render("campgrounds/index", {campgrounds : campgrounds});	//rendering index file along with the data sent under the first name campgrounds
 	}
 	});
 });
 
 // 2. NEW route - shows form to create new campground
-app.get("/campgrounds/new", (req, res) => { //this route is where form will be shown
-    res.render("new");
+app.get("/campgrounds/new", (req, res) => { 
+    res.render("campgrounds/new");
 });
 
 // 3. CREATE route - add new campground to DB
@@ -79,7 +80,7 @@ app.get("/campgrounds/:id", (req, res) => {
 			res.redirect("/campgrounds");
 		} else {
 			//render show template with that campground
-			res.render("show", {campground: foundCampground});	//campground is just name we give, more importantly the value of id we found will be displayed
+			res.render("campgrounds/show", {campground: foundCampground});	//campground is just name we give, more importantly the value of id we found will be displayed
 		}
 	});
 });
@@ -92,7 +93,7 @@ app.get("/campgrounds/:id/edit", (req, res) => {
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
-			res.render("edit", {campground: foundCampground});
+			res.render("campgrounds/edit", {campground: foundCampground});
 		}
 	});
 });
@@ -123,9 +124,50 @@ app.delete("/campgrounds/:id", (req, res) => {
 	});
 });
 
+/* ======================================
+		COMMENTS ROUTES
+========================================
+*/
+//NEW route
+app.get("/campgrounds/:id/comments/new", (req, res) => {
+	//find campground by id
+	Campground.findById(req.params.id, (err, campground) => {
+		if(err) {
+			console.log(err);
+		} else {
+			res.render("comments/new", {campground: campground});
+		}
+	});
+});
+
+//CREATE Route 
+app.post("/campgrounds/:id/comments", (req, res) => {
+	//lookup campground using id
+	Campground.findById(req.params.id, (err, campground) => {
+		if(err) {
+			console.log(err);
+			res.redirect("/campgrounds");
+		} else {
+			Comment.create(req.body.comment, (err, comment) => {
+				if(err) {
+					console.log(err);
+				} else {
+					campground.comments.push(comment);
+					campground.save();
+					res.redirect("/campgrounds/" + campground._id);
+				}
+			});
+		}
+	});
+	//create new comment
+	//connect new comment to campground
+	//redirect campground to show page
+});
+
 app.get("*", (req, res) => {
 	res.send("Error! Page not found");
 });
+
 
 app.listen(3000, () => {
 	console.log("Listening to port 3000");

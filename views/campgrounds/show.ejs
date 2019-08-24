@@ -1,17 +1,21 @@
-<% include partials/header %>
+<% include ../partials/header %>
 
 <div class="container">
     <div class="row">
         <div class="col-sm">
-            <a href="/campgrounds">Go back</a>
+            <a href="/campgrounds" class="btn btn-secondary">Go back</a>
             <h1 style="text-align: center"><%=campground.name%></h1>
         </div>
     </div>
     <div class="image">
         <img src="<%=campground.image%>" class="img-fluid" alt="campground-image">
     </div>
-    <div class="text-center">
+    
         <p><%=campground.description%></p>
+        <p>
+            <a class="btn btn-success" href="/campgrounds/<%=campground._id%>/comments/new">Leave a review</a>
+        </p>
+
         <a class="btn btn-warning" href="/campgrounds/<%=campground._id%>/edit">Edit</a>
         <form id="inline-it" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
             <button class="btn btn-danger">Delete</button>
@@ -19,12 +23,16 @@
     </div>
 </div>
 
-<div class="container">
-    <%campground.comments.forEach(function(comment) { %>
-        <p>
-            <strong><%=comment.author%></strong> - <%=comment.text%>
-        </p>
-    <%});%>
+<div class="container text-center">
+    <div class="col-12">
+        <%campground.comments.forEach(function(comment) { %>
+            <p>
+                <strong><%=comment.author%></strong> - <%=comment.text%>
+            </p>
+        <%});%>
+    </div>
 </div>
 
-<% include partials/footer %>
+
+
+<% include ../partials/footer %>

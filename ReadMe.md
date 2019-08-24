@@ -62,3 +62,9 @@
 # Add the Comment model!
 * Fix errors
 * Display comments on campground show page!
+
+# Comment New/Create
+* Use nested routes. This is because the comments are dependent on campground. Comment will be associated with a campground.
+* Add comment new and create routes
+* Add new comment form 
+

@@ -19,4 +19,5 @@ const campgroundSchema = new mongoose.Schema({
 		}
 	]
 });
+
 module.exports = mongoose.model("Campground", campgroundSchema); //now the model is being sent out of the file
