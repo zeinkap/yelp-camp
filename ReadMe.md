@@ -68,3 +68,12 @@
 * Add comment new and create routes
 * Add new comment form 
 
+# Style Show Page
+* Add sidebar to show page
+* Beautify the display of comments
+
+# To Do
+* Make the navbar buttons in header collapsible on small screens
+
+# Refactor routes
+* Use Express router to reoragnize all routes

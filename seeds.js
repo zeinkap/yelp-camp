@@ -7,19 +7,19 @@ const Comment = require("./models/comment");
 // add some campgrounds data in array
 let data = [
     {
-        name: "Cloud's nest",
+        name: "Cloud's Acorn Nest",
         image: "http://www.camp-liza.com/wp-content/uploads/2017/10/20170708_093155_HDR-1.jpg",
-        description: "This is like a dream sky nest!"
+        description: "Lorem ipsum dolor sit amet, nec tritani meliore ad, ut qui dicat tation veniam. Pro et eius necessitatibus, meis paulo vivendum ad his, te inani tractatos liberavisse has. Usu graeco iuvaret disputationi an. Eu duo assum intellegebat disputationi, pri et erat commodo nostrud, erroribus voluptaria appellantur vim eu. Phaedrum vituperatoribus eu quo, id modus perfecto his, pro vide dignissim et. Everti liberavisse ad duo, mei facer graeco intellegam an. Vel ad tation vivendo scribentur."
     },
     {
-        name: "Compound Park",
+        name: "Dairy Milk Site",
         image: "https://cdn.pixabay.com/photo/2017/08/06/02/32/camp-2587926_960_720.jpg",
-        description: "A massive 100+ campsite field waiting to be ravaged by you"
+        description: "Lorem ipsum dolor sit amet, nec tritani meliore ad, ut qui dicat tation veniam. Pro et eius necessitatibus, meis paulo vivendum ad his, te inani tractatos liberavisse has. Usu graeco iuvaret disputationi an. Eu duo assum intellegebat disputationi, pri et erat commodo nostrud, erroribus voluptaria appellantur vim eu. Phaedrum vituperatoribus eu quo, id modus perfecto his, pro vide dignissim et. Everti liberavisse ad duo, mei facer graeco intellegam an. Vel ad tation vivendo scribentur."
     },
     {
-        name: "Belmon Lake State Park",
+        name: "Belmont Lake State Park",
         image: "https://www.pinetreesociety.org/wp-content/uploads/2017/10/cabins-960x600.jpg",
-        description: "Full sky test"
+        description: "Lorem ipsum dolor sit amet, nec tritani meliore ad, ut qui dicat tation veniam. Pro et eius necessitatibus, meis paulo vivendum ad his, te inani tractatos liberavisse has. Usu graeco iuvaret disputationi an. Eu duo assum intellegebat disputationi, pri et erat commodo nostrud, erroribus voluptaria appellantur vim eu. Phaedrum vituperatoribus eu quo, id modus perfecto his, pro vide dignissim et. Everti liberavisse ad duo, mei facer graeco intellegam an. Vel ad tation vivendo scribentur."
     }
 ]
 
