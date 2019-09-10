@@ -87,4 +87,8 @@ router.delete("/:id", (req, res) => {
 	});
 });
 
+router.get("*", (req, res) => {
+	res.send("Error! Page not found");
+});
+
 module.exports = router;

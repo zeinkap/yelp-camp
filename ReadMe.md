@@ -77,3 +77,9 @@
 
 # Refactor routes
 * Use Express router to reoragnize all routes
+
+# Authentication
+* Using passport, passport-local, passport-local-mongoose
+* Setup folder structure and install necessary packages (i.e the passport packages and express-session)
+* Add root route and template
+* Add secret route and template

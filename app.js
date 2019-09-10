@@ -1,14 +1,20 @@
-const	express 			= require("express"),
-		app 				= express(),
-		port				= 3000,
-		bodyParser 			= require("body-parser"),
-		request 			= require("request"),
-		methodOverride 		= require("method-override"),
-		expressSanitizer	= require("express-sanitizer"),
-		mongoose 			= require("mongoose"),
-		Campground 			= require("./models/campground"),
-		Comment				= require("./models/comment"),
-		seedDB				= require("./seeds")
+const	express 				= require("express"),
+		app 					= express(),
+		port					= 3000,
+		bodyParser 				= require("body-parser"),
+		request 				= require("request"),
+		methodOverride 			= require("method-override"),
+		expressSanitizer		= require("express-sanitizer"),
+		mongoose 				= require("mongoose"),
+		Campground 				= require("./models/campground"),
+		Comment					= require("./models/comment"),
+		User					= require("./models/user"),
+		seedDB					= require("./seeds"),
+		passport				= require("passport"),
+		localStrategy			= require("passport-local"),
+		passportLocalMongoose	= require("passport-local-mongoose"),
+		session 				= require("express-session")
+		
 
 // requiring routes
 const	commentRoutes			= require("./routes/comments"),
@@ -22,8 +28,20 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
+app.use(session({
+	secret: "zein is da best",	//this secret will be used to encode/decode the sessions
+	resave: false,
+	saveUninitialized: false
+}));
+// To use passport, you must have these two:
+app.use(passport.initialize());
+app.use(passport.session());
 
-seedDB();
+// used to read the session, take data from session that is encoded. We are defining this on the User
+passport.serializeUser(User.serializeUser());	// encodes session and puts it back in
+passport.deserializeUser(User.deserializeUser());	// decoding the session 
+
+seedDB();	// will remove all campgrounds and add 3 default campgrounds with a comment in each
 
 //adds campground to DB
 // Campground.create(

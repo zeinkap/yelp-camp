@@ -27,20 +27,13 @@ router.post("/", (req, res) => {
 				if(err) {
 					console.log(err);
 				} else {
-					campground.comments.push(comment);
+					campground.comments.push(comment);	//connect new comment to campground
 					campground.save();
-					res.redirect("/campgrounds/" + campground._id);
+					res.redirect("/campgrounds/" + campground._id); // redirect campground to show page
 				}
 			});
 		}
 	});
-	//create new comment
-	//connect new comment to campground
-	//redirect campground to show page
 });
-
-// router.get("*", (req, res) => {
-// 	res.send("Error! Page not found");
-// });
 
 module.exports = router;
