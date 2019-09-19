@@ -1,6 +1,5 @@
 const	express 				= require("express"),
 		app 					= express(),
-		port					= 3000,
 		bodyParser 				= require("body-parser"),
 		request 				= require("request"),
 		methodOverride 			= require("method-override"),
@@ -72,6 +71,14 @@ app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);	//all routes in this file will have /campgrounds appended to it
 app.use("/campgrounds/:id/comments", commentRoutes);
 
-app.listen(port, () => {
-	console.log("Listening on port 3000");
-});
+
+// Heroku
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+app.listen(port);
+
+// app.listen(3000, () => {
+// 	console.log("Listening on port 3000");
+// });

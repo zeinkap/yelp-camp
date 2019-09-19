@@ -4,7 +4,8 @@
   "description": "Creating a full scale campground website with back end work following MEN stack",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "Zein Kap",
   "license": "ISC",
