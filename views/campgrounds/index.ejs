@@ -1,29 +1,28 @@
 <% include ../partials/header %>
-<div class="container">
-    <header class="jumbotron">
-        <div class="container">
-            <h1>Welcome to YelpCamp</h1>
-            <p>View our hand-picked campgrounds from all over the world</p>
-            <p>
-                <a class="btn btn-primary btn-large" href="/campgrounds/new">Add New Campground</a>
-            </p>
-        </div>
-    </header>
 
-
+<div class="container-fluid">
     <div class="container">
-      <div class="row">
-        <% campgrounds.forEach((campground) => { %>
-            <div class="col-md"> 
-                <img src="<%= campground.image %>" class="img-fluid img-thumbnail">
-                <div class="caption">
-                    <h4><%= campground.name %></h4>
-                </div>
-                <p>
-                    <a href="/campgrounds/<%= campground._id %> " class="btn btn-primary">More info</a>
-                </p>
+        <header class="jumbotron">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <h1>Welcome To YelpCamp!</h1>
+                <p>View our hand-picked campgrounds from all over North America</p>
+                <a class="btn btn-primary" href="/campgrounds/new">Add New Campground</a>
             </div>
-            
+        </div>
+        </header>
+    </div>
+    
+    <div class="container">
+      <div class="row justify-content-center align-items-center">
+        <% campgrounds.forEach((campground) => { %>
+            <div class="col-auto"> 
+                <figure class="figure" id="figure-landing">
+                    <img src="<%= campground.image %>" id="img-landing-page" class="figure-img img-fluid rounded">
+                    <h4 class="text-center"><%= campground.name %></h4>
+                    <a href="/campgrounds/<%= campground._id %>" class="btn btn-info">More info</a>
+                </figure>
+            </div>
         <% }); %>
       </div>
     </div>

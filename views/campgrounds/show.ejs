@@ -31,6 +31,9 @@
                     <h5 class="float-right">$9.00/night</h5>
                     <h4><a><%= campground.name %></a></h4>
                     <p><%= campground.description %></p>
+                    <p>
+                        <em>Submitted By <%= campground.author.username %></em> 
+                    </p>
                 </figcaption>
             </figure>
 
@@ -43,7 +46,7 @@
                 <div class="card-body">
                     <% campground.comments.forEach( (comment) => { %>
                         <span class="float-right">10 days ago</span>
-                        <h5 class="card-title"><%= comment.author %></h5>
+                        <h5 class="card-title"><%= comment.author.username %></h5>
                         <p class="card-text"><%= comment.text %></p>
                         <hr>
                     <%});%>

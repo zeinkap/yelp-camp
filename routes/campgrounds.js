@@ -9,27 +9,35 @@ router.get("/", (req, res) => {
 	if(err) {
 		console.log(err);
 	} else {
-		res.render("campgrounds/index", {campgrounds : allCampgrounds});	//rendering index file along with the data sent under the first name campgrounds
+		res.render("campgrounds/index", {campgrounds : allCampgrounds});
 	}
 	});
 });
 
 // 2. CREATE route - add new campground to DB
-router.post("/", (req, res) => {     //not same as GET, we are following REST convention format
-	//sanitizer here
-	req.body.campground.description = req.sanitize(req.body.campground.description);	//taking what its equal to and sanitizing it
+router.post("/", isLoggedIn, (req, res) => {     
+	let name = req.body.name;
+	let image = req.body.image;
+	let desc = req.body.description;
+	req.body.description = req.sanitize(req.body.description);	// sanitize description field
+	let author = {
+		id: req.user._id,
+		username: req.user.username
+	}
+	let newCampground = {name: name, image: image, description: desc, author: author}
 	// Create campground and save to DB
-	Campground.create(req.body.campground, (err, newCampground) => {	//the req.body.campground object (from the form) contains all the input values
+	Campground.create(newCampground, (err, newlyCreated) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {
 			console.log(err);
 		} else {
-			res.redirect("/campgrounds");   //event though there are 2 of these routes, it will redirect to GET by default
+			console.log(newlyCreated);
+			res.redirect("/campgrounds");   //although there are 2 of these routes, will redirect to GET by default
 		}			  
 	});
 });
 
 // 3. NEW route - shows form to create new campground
-router.get("/new", (req, res) => { 
+router.get("/new", isLoggedIn, (req, res) => { 
     res.render("campgrounds/new");
 });
 
@@ -87,8 +95,15 @@ router.delete("/:id", (req, res) => {
 	});
 });
 
-router.get("*", (req, res) => {
-	res.send("Error! Page not found");
-});
+function isLoggedIn(req, res, next) {
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/login");
+}
+
+// router.get("*", (req, res) => {
+// 	res.send("Error! Page not found");
+// });
 
 module.exports = router;

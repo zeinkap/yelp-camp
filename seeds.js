@@ -3,7 +3,7 @@
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const Comment = require("./models/comment");
-
+ 
 // add some campgrounds data in array
 let data = [
     {

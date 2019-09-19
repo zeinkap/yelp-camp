@@ -71,15 +71,27 @@
 # Style Show Page
 * Add sidebar to show page
 * Beautify the display of comments
-
-# To Do
 * Make the navbar buttons in header collapsible on small screens
 
 # Refactor routes
 * Use Express router to reoragnize all routes
 
 # Authentication
-* Using passport, passport-local, passport-local-mongoose
-* Setup folder structure and install necessary packages (i.e the passport packages and express-session)
-* Add root route and template
-* Add secret route and template
+* Install all packages needed for auth (passport, passport-local, passport-local-mongoose)
+* Define User schema/model
+* Configure Passport
+* Add register routes and template
+* Add login routes and template
+* Add logout route
+* Prevent user from adding comment if not signed in
+* Show/hide auth navbar links correctly (not showing login option when logged in)
+
+# To Do
+* Add profile page for signed in as
+
+# Associate Users and Comments
+* save author's name to a comment automatically
+
+# Users and Campgrounds
+* Prevent unauthenticated user from creating campground (protect the create and new routes in campgrounds)
+* Save username and Id to newly created campground

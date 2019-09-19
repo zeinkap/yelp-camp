@@ -11,9 +11,8 @@ const	express 				= require("express"),
 		User					= require("./models/user"),
 		seedDB					= require("./seeds"),
 		passport				= require("passport"),
-		localStrategy			= require("passport-local"),
-		passportLocalMongoose	= require("passport-local-mongoose"),
-		session 				= require("express-session")
+		LocalStrategy			= require("passport-local"),
+		passportLocalMongoose	= require("passport-local-mongoose")
 		
 
 // requiring routes
@@ -28,20 +27,29 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
-app.use(session({
+//seedDB();	// remove all campgrounds and add 3 default campgrounds with a comment in each
+
+//PASSPORT CONFIG
+app.use(require("express-session")({	// creates session for every unique user across multiple http requests
 	secret: "zein is da best",	//this secret will be used to encode/decode the sessions
 	resave: false,
 	saveUninitialized: false
 }));
-// To use passport, you must have these two:
+// middleware configured with express so web server can use passport. Order matters. Must have these:
 app.use(passport.initialize());
 app.use(passport.session());
 
+// for passport to accept username and password for user authentication via checking mongo DB
+passport.use(new LocalStrategy(User.authenticate()));	//authenticate() is a method that comes with package passportLocalMongoose (from user.ejs)
 // used to read the session, take data from session that is encoded. We are defining this on the User
 passport.serializeUser(User.serializeUser());	// encodes session and puts it back in
 passport.deserializeUser(User.deserializeUser());	// decoding the session 
 
-seedDB();	// will remove all campgrounds and add 3 default campgrounds with a comment in each
+// passing user to every single template using res.locals
+app.use((req, res, next) => {
+	res.locals.currentUser = req.user;	
+	next();	// to make this middleware move to next code
+});
 
 //adds campground to DB
 // Campground.create(
