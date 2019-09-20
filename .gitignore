@@ -1,3 +1,4 @@
 #removing unnecessary files to show
 /process.env
 /restfulRoutes.png
+/package-lock.json
