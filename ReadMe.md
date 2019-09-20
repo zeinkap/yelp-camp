@@ -95,3 +95,5 @@
 # Users and Campgrounds
 * Prevent unauthenticated user from creating campground (protect the create and new routes in campgrounds)
 * Save username and Id to newly created campground
+
+# Having separate databases between development and production envrironments
