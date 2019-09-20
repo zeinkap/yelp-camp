@@ -14,15 +14,14 @@ const	express 				= require("express"),
 		LocalStrategy			= require("passport-local"),
 		passportLocalMongoose	= require("passport-local-mongoose")
 
-
 // requiring routes
 const	commentRoutes			= require("./routes/comments"),
 		campgroundRoutes		= require("./routes/campgrounds"),
 		indexRoutes				= require("./routes/index")
 
 // APP CONFIG
-mongoose.connect("process.env.DATABASEURL", {useNewUrlParser: true});	//connects to local dev environment
-//mongoose.connect("mongodb+srv://zeinkap:Zkap9611@cluster0-f0jxn.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true});
+let url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp"	// backup that provides default DB
+mongoose.connect(url, {useNewUrlParser: true});		//connects to best environment, has 2 outcomes
 
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -53,27 +52,9 @@ app.use((req, res, next) => {
 	next();	// to make this middleware move to next code
 });
 
-//adds campground to DB
-// Campground.create(
-// 	{
-// 		name: "Granite Hill",
-// 		image: "https://assets.simpleviewinc.com/simpleview/image/fetch/q_60/https://assets.simpleviewinc.com/simpleview/image/upload/crm/poconos/Waterfalls-Bushkill-Falls-3-PoconoMtns0_6c255fcc-a099-e9fa-f98f91bcfd3d7649.jpg",
-// 		description: "This place is huge, but no bathrooms. The scenery is pretty nice and relaxing."
-// 	}, (err, campground) => {
-// 	if(err) {
-// 		console.log("There is an error!");
-// 		console.log(err);
-// 	} else {
-// 		console.log("Newly created campground: ");
-// 		console.log(campground);
-// 	}
-// });
-
-
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);	//all routes in this file will have /campgrounds appended to it
 app.use("/campgrounds/:id/comments", commentRoutes);
-
 
 // Heroku
 let port = process.env.PORT;

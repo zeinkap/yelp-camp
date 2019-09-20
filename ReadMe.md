@@ -97,3 +97,5 @@
 * Save username and Id to newly created campground
 
 # Having separate databases between development and production envrironments
+* adding environment variables (are hidden to other devs)
+* Create single databaseurl env variable with 2 differ values for local and heroku  
