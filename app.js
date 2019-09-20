@@ -1,3 +1,4 @@
+require("dotenv").config();	//package that allows us to allow env variables to persist via .env file
 const	express 				= require("express"),
 		app 					= express(),
 		bodyParser 				= require("body-parser"),
@@ -11,16 +12,8 @@ const	express 				= require("express"),
 		seedDB					= require("./seeds"),
 		passport				= require("passport"),
 		LocalStrategy			= require("passport-local"),
-		passportLocalMongoose	= require("passport-local-mongoose"),
-		dotenv					= require("dotenv").config();
-		
-//configure dotenv for adding separate database
-const db = require('db')
-db.connect({
-  host: process.env.DB_HOST,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS
-});
+		passportLocalMongoose	= require("passport-local-mongoose")
+
 
 // requiring routes
 const	commentRoutes			= require("./routes/comments"),
@@ -28,10 +21,8 @@ const	commentRoutes			= require("./routes/comments"),
 		indexRoutes				= require("./routes/index")
 
 // APP CONFIG
-console.log(process.env.DATABASEURL);
+mongoose.connect("process.env.DATABASEURL", {useNewUrlParser: true});	//connects to local dev environment
 //mongoose.connect("mongodb+srv://zeinkap:Zkap9611@cluster0-f0jxn.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true});
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
-//process.env.databaseURL	//refers to the correct url for the given envrionment
 
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
 app.use(bodyParser.urlencoded({extended: true}));
