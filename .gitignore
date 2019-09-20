@@ -1,5 +1,5 @@
 #removing unnecessary files to show
 /restfulRoutes.png
 /package-lock.json
-/node_modules
-/process.env
+/node_module
+/.env

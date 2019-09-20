@@ -4,10 +4,6 @@ const User = require("../models/user");
 const passport = require("passport");
 
 //AUTH ROUTES
-router.get("/secret", isLoggedIn, (req, res) => {   //if user is logged in then the secret page will be shown
-    res.render("secret");
-});
-
 router.get("/register", (req, res) => {
     res.render("register");
 });
