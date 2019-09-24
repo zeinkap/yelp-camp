@@ -4,8 +4,8 @@ const Campground = require("../models/campground");
 
 // 1. INDEX route - shows all campgrounds
 router.get("/", (req, res) => {
-	//rather than getting from array we will retrieve camps from DB
-	Campground.find({}, (err, allCampgrounds) => {	//campgrounds here is placeholder for the data coming back from DB from out .find
+	//Retrieving campgrounds from DB
+	Campground.find({}, (err, allCampgrounds) => {
 	if(err) {
 		console.log(err);
 	} else {
@@ -30,6 +30,7 @@ router.post("/", isLoggedIn, (req, res) => {
 		if(err) {
 			console.log(err);
 		} else {
+			console.log("Created the following campground:")
 			console.log(newlyCreated);
 			res.redirect("/campgrounds");   //although there are 2 of these routes, will redirect to GET by default
 		}			  
@@ -57,23 +58,18 @@ router.get("/:id", (req, res) => {
 });
 
 // 5. EDIT route - editing a campground
-router.get("/:id/edit", (req, res) => {
-	//need to find that campground data from id so it prefills form
+router.get("/:id/edit", checkCampgroundOwnership, (req, res) => {
 	Campground.findById(req.params.id, (err, foundCampground) => {
-		if(err) {
-			console.log(err);
-			res.redirect("/campgrounds");
-		} else {
-			res.render("campgrounds/edit", {campground: foundCampground});
-		}
+		res.render("campgrounds/edit", {campground: foundCampground});
 	});
 });
 
 // 6. UPDATE route - updating details of an existing campground
-router.put("/:id", (req, res) => {
+router.put("/:id", checkCampgroundOwnership, (req, res) => {
+	// prevent user from sending code in description field 
 	req.body.campground.description = req.sanitize(req.body.campground.description);
-	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form
-	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updateCampground) => {
+	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form 
+	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
 		if(err) {
 			console.log(err);
 			res.redirect("/campgrounds");
@@ -84,22 +80,45 @@ router.put("/:id", (req, res) => {
 });
 
 // 7. DESTROY route - Removing campground 
-router.delete("/:id", (req, res) => {
-	Campground.findByIdAndRemove(req.params.id, (err) => {
+router.delete("/:id", checkCampgroundOwnership, (req, res) => {
+	Campground.findByIdAndRemove(req.params.id, (err, deletedCampground) => {
 		if(err) {
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
+			console.log("Deleted the following campground:");
+			console.log(deletedCampground);
 			res.redirect("/campgrounds");
 		}
 	});
 });
 
-function isLoggedIn(req, res, next) {
+function isLoggedIn(req, res, next) {	// all middlewares have those 3 params
     if(req.isAuthenticated()) {
         return next();
     }
     res.redirect("/login");
+}
+
+function checkCampgroundOwnership(req, res, next) {
+	// if user is logged in...
+	if(req.isAuthenticated()) {
+		Campground.findById(req.params.id, (err, foundCampground) => {
+			if(err) {
+				console.log(err);
+				res.redirect("back");	// takes user to the previous page they were on 
+			} else {
+				// does user own the campground?
+				if (foundCampground.author.id.equals(req.user._id)) {
+					next();	// runs code that is in the route
+				} else {
+					res.redirect("back");
+				}
+			}
+		});
+	} else {	//if user is not logged in...
+		res.redirect("back");	
+	}
 }
 
 // router.get("*", (req, res) => {

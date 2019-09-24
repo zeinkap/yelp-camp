@@ -1,15 +1,6 @@
 <% include ../partials/header %>
 
-<div class="toolbar text-right" role="toolbar" aria-label="Toolbar with edit/delete options">
-    <div class="btn-group" role="group">
-        <a class="btn btn-secondary btn-sm" href="/campgrounds/<%=campground._id%>/edit">Edit</a>
-        <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
-            <button class="btn btn-danger btn-sm">Delete</button>
-        </form>
-    </div>
-</div>
-
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-3">
             <h5>
@@ -26,7 +17,7 @@
         </div>
         <div class="col-md-9">
             <figure class="figure">
-                <img class="figure-img img-fluid img-thumbnail" src="<%= campground.image %>" alt="campground-image">
+                <img class="figure-img img-thumbnail" src="<%= campground.image %>" alt="campground-image">
                 <figcaption class="figure-caption">
                     <h5 class="float-right">$9.00/night</h5>
                     <h4><a><%= campground.name %></a></h4>
@@ -34,25 +25,33 @@
                     <p>
                         <em>Submitted By <%= campground.author.username %></em> 
                     </p>
+                    <% if(currentUser && campground.author.id.equals(currentUser._id)) { %>
+                        <a class="btn btn-warning btn-sm" href="/campgrounds/<%=campground._id%>/edit">Edit</a>
+                        <form id="delete-btn-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    <%  } %>
                 </figcaption>
             </figure>
 
-            <div class="text-right" style="padding-bottom: 0.75rem">
-                <a class="btn btn-info btn-sm" href="/campgrounds/<%=campground._id%>/comments/new">Leave a review</a>
-            </div>
-
-            <div class="card" style="margin-bottom: 0.75rem">
+            <div class="card" style="max-width: 62rem;">
+                <div class="text-right">
+                    <a id="review-btn" class="btn btn-info" href="/campgrounds/<%=campground._id%>/comments/new">Leave a review</a>
+                </div>
+                <hr>
                 <div class="card-header">Reviews</div>
-                <div class="card-body">
-                    <% campground.comments.forEach( (comment) => { %>
+                <% campground.comments.forEach( (comment) => { %>
+                    <div class="card-body">
                         <span class="float-right">10 days ago</span>
                         <h5 class="card-title"><%= comment.author.username %></h5>
                         <p class="card-text"><%= comment.text %></p>
-                        <hr>
-                    <%});%>
-                </div>   
+                        <p class="card-text">
+                            <small class="text-muted">Last updated 3 mins ago</small>
+                        </p>
+                    </div>
+                    <hr>
+                <%});%>
             </div>
-
         </div>
     </div>
 </div>

@@ -1,7 +1,6 @@
 # YelpCamp
 * Add Landing Page
 * Add campgrounds page that lists all campgrounds
-* In future database will be added
 
 # Each campground will have:
 * Name
@@ -86,9 +85,6 @@
 * Prevent user from adding comment if not signed in
 * Show/hide auth navbar links correctly (not showing login option when logged in)
 
-# To Do
-* Add profile page for signed in as
-
 # Associate Users and Comments
 * save author's name to a comment automatically
 
@@ -99,3 +95,12 @@
 # Having separate databases between development and production envrironments
 * adding environment variables (are hidden to other devs)
 * Create single databaseurl env variable with 2 differ values for local and heroku  
+
+# Authorization
+* User can only edit/delete his campgrounds
+* Edit/delete options only available if he owns that campground
+
+# To Do
+* Add profile page for signed in user. Add profile avatar
+* for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
+Add upload photo option

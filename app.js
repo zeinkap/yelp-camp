@@ -6,14 +6,16 @@ const	express 				= require("express"),
 		methodOverride 			= require("method-override"),
 		expressSanitizer		= require("express-sanitizer"),
 		mongoose 				= require("mongoose"),
-		Campground 				= require("./models/campground"),
-		Comment					= require("./models/comment"),
-		User					= require("./models/user"),
 		seedDB					= require("./seeds"),
 		passport				= require("passport"),
 		LocalStrategy			= require("passport-local"),
 		passportLocalMongoose	= require("passport-local-mongoose")
 
+// requiring models
+const	Campground 				= require("./models/campground"),
+		Comment					= require("./models/comment"),
+		User					= require("./models/user")
+		
 // requiring routes
 const	commentRoutes			= require("./routes/comments"),
 		campgroundRoutes		= require("./routes/campgrounds"),
@@ -21,7 +23,7 @@ const	commentRoutes			= require("./routes/comments"),
 
 // APP CONFIG
 let url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp"	// backup that provides default DB
-mongoose.connect(url, {useNewUrlParser: true});		//connects to best environment, has 2 outcomes
+mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
 
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
 app.use(bodyParser.urlencoded({extended: true}));
