@@ -1,7 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/user");
-const passport = require("passport");
+const   express     = require("express"),
+        router      = express.Router(),
+        User        = require("../models/user"),
+        passport    = require("passport")
 
 //AUTH ROUTES
 router.get("/register", (req, res) => {
@@ -27,7 +27,7 @@ router.post("/register", (req, res) => {
 router.get("/login", (req, res) => {
     res.render("login");
 });
-// passported addded as middleware (runs before callback, between start and end of route) 
+// passport addded as middleware (runs before callback, between start and end of route) 
 // Dont need to specify username/password (passport gets it from req.body and authenticates with whats in DB)
 router.post("/login", passport.authenticate("local", {
     successRedirect: "/campgrounds",     
@@ -40,13 +40,5 @@ router.get("/logout", (req, res) => {
     req.logout();   //using passport to expire session
     res.redirect("/campgrounds");
 });
-
-//writing our own middleware. Always takes these 3 params.
-function isLoggedIn(req, res, next) {
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-}
 
 module.exports = router;

@@ -12,16 +12,12 @@
     object-fit: cover;
 }
 
-.img-thumbnail {
-    padding: 0;
-}
-
 #navbar-brand-img {
     width: 40px;
     height: 40px;
 }
 
-#delete-btn-inline {
+.delete-btn-inline {
     display: inline;
 }
 

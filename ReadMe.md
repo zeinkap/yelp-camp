@@ -100,6 +100,24 @@
 * User can only edit/delete his campgrounds
 * Edit/delete options only available if he owns that campground
 
+# Unit Testing with mocha and chai
+* install mocha and chai as dev dependencies
+
+# Editing Comments
+* Add Edit route for comments
+* Add Edit button
+* Add Update route
+
+# Deleting Comments
+* Add Destroy route
+* Add Delete buton
+
+# Authorization Part 2
+* User can only edit his/her comments
+* User can only delete his/her comments 
+* Hide/Show edit and delete buttons 
+* Refactor middleware
+
 # To Do
 * Add profile page for signed in user. Add profile avatar
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.

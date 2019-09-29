@@ -31,30 +31,30 @@ function seedDB() {
         }
         console.log("Removed all campgronuds!");
         // add few campgrounds
-        data.forEach((seed) => {
-            Campground.create(seed, (err, campground) => {
-                if (err) {
-                    console.log("Error occured when creating campground. See below");
-                    console.log(err);
-                } else {
-                    console.log("Added a campground");
-                    //create a comment. This same comment will be added to all campgrounds.
-                    Comment.create({
-                        text: "This place looks great. Looking forward to swimming, rolling, hiking and camping in it",
-                        author: "Homer"
-                    }, (err, comment) => {
-                        if (err) {
-                            console.log("Error occured when creating comment. See below");
-                            console.log(err);
-                        } else {
-                            campground.comments.push(comment);
-                            campground.save();
-                            console.log("Added new comment");
-                        }
-                    })
-                }
-            });
-        });
+        // data.forEach((seed) => {
+        //     Campground.create(seed, (err, campground) => {
+        //         if (err) {
+        //             console.log("Error occured when creating campground. See below");
+        //             console.log(err);
+        //         } else {
+        //             console.log("Added a campground");
+        //             //create a comment. This same comment will be added to all campgrounds.
+        //             Comment.create({
+        //                 text: "This place looks great. Looking forward to swimming, rolling, hiking and camping in it",
+        //                 author: "Homer"
+        //             }, (err, comment) => {
+        //                 if (err) {
+        //                     console.log("Error occured when creating comment. See below");
+        //                     console.log(err);
+        //                 } else {
+        //                     campground.comments.push(comment);
+        //                     campground.save();
+        //                     console.log("Added new comment");
+        //                 }
+        //             })
+        //         }
+        //     });
+        // });
     });
 
 }

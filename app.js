@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
-//seedDB();	// remove all campgrounds and add 3 default campgrounds with a comment in each
+//seedDB();	// removes all campgrounds and adds 3 default campgrounds with a comment in each
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests
@@ -64,7 +64,3 @@ if (port == null || port == "") {
   port = 3000;
 }
 app.listen(port);
-
-// app.listen(3000, () => {
-// 	console.log("Listening on port 3000");
-// });

@@ -4,8 +4,8 @@
   "description": "Creating a full scale campground website with back end work following MEN stack",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"  
+    "test": "mocha",
+    "start": "node app.js"
   },
   "author": "Zein Kap",
   "license": "ISC",
@@ -22,5 +22,10 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^5.0.1",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^6.2.1"
   }
 }
