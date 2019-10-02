@@ -6,6 +6,7 @@ const	express 				= require("express"),
 		methodOverride 			= require("method-override"),
 		expressSanitizer		= require("express-sanitizer"),
 		mongoose 				= require("mongoose"),
+		flash					= require("connect-flash"),
 		seedDB					= require("./seeds"),
 		passport				= require("passport"),
 		LocalStrategy			= require("passport-local"),
@@ -25,11 +26,13 @@ const	commentRoutes			= require("./routes/comments"),
 let url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp"	// backup that provides default DB
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
 
+// telling express to use these packages
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
+app.use(flash());	// must be added before passport config
 //seedDB();	// removes all campgrounds and adds 3 default campgrounds with a comment in each
 
 //PASSPORT CONFIG
@@ -51,6 +54,9 @@ passport.deserializeUser(User.deserializeUser());	// decoding the session
 // passing user to every single template using res.locals
 app.use((req, res, next) => {
 	res.locals.currentUser = req.user;	
+	// defining two differ vars for our flash messages
+	res.locals.error = req.flash("error");	
+	res.locals.success = req.flash("success");	
 	next();	// to make this middleware move to next code
 });
 

@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
 	//Retrieving campgrounds from DB
 	Campground.find({}, (err, allCampgrounds) => {
 	if(err) {
+		req.flash("error", "Something went wrong.");
 		console.log(err);
 	} else {
 		res.render("campgrounds/index", {campgrounds : allCampgrounds});
@@ -29,8 +30,10 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 	// Create campground and save to DB
 	Campground.create(newCampground, (err, newlyCreated) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {
+			req.flash("error", "Something went wrong.");
 			console.log(err);
 		} else {
+			req.flash("success", "Campground has been added.");
 			console.log("Created the following campground:")
 			console.log(newlyCreated);
 			res.redirect("/campgrounds");   //although there are 2 of these routes, will redirect to GET by default
@@ -48,7 +51,8 @@ router.get("/:id", (req, res) => {
 	//find campground with provided ID from url and using mongoose function findbyid
 	//populating comments array (which was associated with campground) so it's not just an id
 	Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {	//foundCampground serves as placeholder for our data that we get back from DB
-		if(err) {
+		if(err || !foundCampground) {
+			req.flash('error', 'Sorry, that campground does not exist!');
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
@@ -61,7 +65,16 @@ router.get("/:id", (req, res) => {
 // 5. EDIT route - editing a campground
 router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 	Campground.findById(req.params.id, (err, foundCampground) => {
-		res.render("campgrounds/edit", {campground: foundCampground});
+		if(!foundCampground) {
+			return res.status(400).send("Item not found.");   // will break out of middleware if its true
+		}
+		if(err) {
+			req.flash("error", "You do not have permission to do that.");
+			console.log(err);
+			res.redirect("/campgrounds");
+		} else {
+			res.render("campgrounds/edit", {campground: foundCampground});
+		}
 	});
 });
 
@@ -72,9 +85,11 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
 	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form 
 	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
 		if(err) {
+			req.flash("error", "You do not have permission to do that.");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
+			req.flash("success", "Campground has been updated.");
 			res.redirect("/campgrounds/" + req.params.id);
 		}
 	});
@@ -84,9 +99,11 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
 router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
 	Campground.findByIdAndRemove(req.params.id, (err, deletedCampground) => {
 		if(err) {
+			req.flash("error", "You do not have permission to do that.");
 			console.log(err);
 			res.redirect("/campgrounds");
 		} else {
+			req.flash("success", deletedCampground.name + " has been deleted.");
 			console.log("Deleted the following campground:");
 			console.log(deletedCampground);
 			res.redirect("/campgrounds");
