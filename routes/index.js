@@ -3,6 +3,10 @@ const   express     = require("express"),
         User        = require("../models/user"),
         passport    = require("passport")
 
+router.get("/", (req, res) => {
+    res.render("landing");
+});
+
 //AUTH ROUTES
 router.get("/register", (req, res) => {
     res.render("register");
@@ -35,6 +39,9 @@ router.post("/login", passport.authenticate("local", {
     successRedirect: "/campgrounds",     
     failureRedirect: "/login"
 }), (req, res) => { // dont need callback code but will just keep to show middleware
+    if (failureRedirect) {
+        req.flash("error", "Invalid Username or Password. Please try again.");
+    }
 }); 
 // after authenticating, user is serialized and stores in session object provided by express-session.
 

@@ -19,6 +19,7 @@ router.get("/", (req, res) => {
 // 2. CREATE route - add new campground to DB
 router.post("/", middleware.isLoggedIn, (req, res) => {     
 	let name = req.body.name;
+	let price = req.body.price;
 	let image = req.body.image;
 	let desc = req.body.description;
 	req.body.description = req.sanitize(req.body.description);	// sanitize description field
@@ -26,7 +27,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 		id: req.user._id,
 		username: req.user.username
 	}
-	let newCampground = {name: name, image: image, description: desc, author: author}
+	let newCampground = {name: name, price: price, image: image, description: desc, author: author}
 	// Create campground and save to DB
 	Campground.create(newCampground, (err, newlyCreated) => {	//the req.body.campground object (from the form) contains all the input values
 		if(err) {

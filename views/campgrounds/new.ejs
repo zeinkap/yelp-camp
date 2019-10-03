@@ -8,7 +8,11 @@
       <form class="form-group" action="/campgrounds" method="POST">
         <div class="form-group">
           <label for="username">Enter campground name</label>
-          <input class="form-control" type="text" name="name" placeholder="Name">
+          <input class="form-control" type="text" name="name" placeholder="Name" required>
+        </div>
+        <div class="form-group">
+          <label for="price">Enter price</label>
+          <input class="form-control" type="number" name="price" placeholder="Price" min="1.00" max="999" step="0.01" required>
         </div>
         <div class="form-group">
           <label for="username">Enter image url</label>
@@ -16,7 +20,7 @@
         </div>
         <div class="form-group">
           <label for="username">Enter description of campground</label>
-          <textarea class="form-control" rows="10" name="description" placeholder="Description"></textarea>
+          <textarea class="form-control" rows="10" name="description" placeholder="Description" maxlength="500" required></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Submit</button>
       </form>

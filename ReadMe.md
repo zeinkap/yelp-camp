@@ -121,6 +121,9 @@
 # Adding flash messages
 * Installing and configuring Flash
 
+# Style new landing page
+* Added animation
+
 # To Do
 * Add profile page for signed in user. Add profile avatar
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
