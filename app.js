@@ -10,7 +10,9 @@ const	express 				= require("express"),
 		seedDB					= require("./seeds"),
 		passport				= require("passport"),
 		LocalStrategy			= require("passport-local"),
-		passportLocalMongoose	= require("passport-local-mongoose")
+		passportLocalMongoose	= require("passport-local-mongoose"),
+		url 					= process.env.DATABASE_URL || "mongodb://localhost:27017/yelp_camp",
+		port 					= process.env.PORT || 3000
 
 // requiring models
 const	Campground 				= require("./models/campground"),
@@ -23,7 +25,6 @@ const	commentRoutes			= require("./routes/comments"),
 		indexRoutes				= require("./routes/index")
 
 // APP CONFIG
-let url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp"	// backup that provides default DB
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
 
 // telling express to use these packages
@@ -64,9 +65,6 @@ app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);	//all routes in this file will have /campgrounds appended to it
 app.use("/campgrounds/:id/comments", commentRoutes);
 
-// Heroku
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 3000;
-}
-app.listen(port);
+app.listen(port, () => {
+    console.log("Listing on port 3000");
+});
