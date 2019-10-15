@@ -38,7 +38,7 @@ app.use(flash());	// must be added before passport config
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests
-	secret: "zein is da best",	//this secret will be used to encode/decode the sessions
+	secret: process.env.SECRET,	//this secret will be used to encode/decode the sessions
 	resave: false,
 	saveUninitialized: false
 }));

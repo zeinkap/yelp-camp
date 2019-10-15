@@ -7,7 +7,11 @@
     "test": "mocha",
     "start": "node app.js"
   },
-  "author": "Zein Kap",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeinkap/yelp-camp.git"
+  },
+  "author": "zeinkap",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
