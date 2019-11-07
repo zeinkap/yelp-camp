@@ -1,4 +1,4 @@
-// each time server starts it will wipe all previous data and create new campgrounds with comments to generated
+// each time server starts it will wipe all previous data and add new campgrounds with comments in DB
 // will be doing error-driven development
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
@@ -34,7 +34,7 @@ function seedDB() {
         // data.forEach((seed) => {
         //     Campground.create(seed, (err, campground) => {
         //         if (err) {
-        //             console.log("Error occured when creating campground. See below");
+        //             console.log("Error occured when adding campground. See below");
         //             console.log(err);
         //         } else {
         //             console.log("Added a campground");
