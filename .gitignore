@@ -1,4 +1,4 @@
 #removing unnecessary files to show
-/package-lock.json
+package-lock.json
 /node_modules
-/.env
+.env

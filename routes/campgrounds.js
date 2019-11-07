@@ -1,7 +1,17 @@
 const	express 		= require("express"),
 		router 			= express.Router(),	// adding all the routes to the router object
 		Campground 		= require("../models/campground"),
-		middleware		= require("../middleware")	// no need to include index.js 'cause its a special file already required in express node_modules
+		middleware		= require("../middleware"),	// no need to include index.js 'cause its a special file already required in express node_modules
+		NodeGeocoder 	= require('node-geocoder')
+ 
+let options = {
+	provider: 'google',
+	httpAdapter: 'https',
+	apiKey: process.env.GEOCODER_API_KEY,
+	formatter: null
+};
+
+let geocoder = NodeGeocoder(options);
 
 // 1. INDEX route - shows all campgrounds
 router.get("/", (req, res) => {
@@ -17,28 +27,39 @@ router.get("/", (req, res) => {
 });
 
 // 2. CREATE route - add new campground to DB
-router.post("/", middleware.isLoggedIn, (req, res) => {     
+router.post("/", middleware.isLoggedIn, (req, res) => {
+	// get data from form and add to campgronuds array     
 	let name = req.body.name;
 	let price = req.body.price;
 	let image = req.body.image;
 	let desc = req.body.description;
-	req.body.description = req.sanitize(req.body.description);	// sanitize description field
+	req.body.description = req.sanitize(desc);	// sanitize description field
 	let author = {
 		id: req.user._id,
 		username: req.user.username
 	}
-	let newCampground = {name: name, price: price, image: image, description: desc, author: author}
-	// Create campground and save to DB
-	Campground.create(newCampground, (err, newlyCreated) => {	//the req.body.campground object (from the form) contains all the input values
-		if(err) {
-			req.flash("error", "Something went wrong.");
+	geocoder.geocode(req.body.location, (err, data) => {
+		if (err || !data.length) {
+			req.flash('error', 'Invalid address');
 			console.log(err);
-		} else {
-			req.flash("success", "Campground has been added.");
-			console.log("Created the following campground:")
-			console.log(newlyCreated);
-			res.redirect("/campgrounds");   //although there are 2 of these routes, will redirect to GET by default
-		}			  
+			return res.redirect('back');
+		}
+		let lat = data[0].latitude;
+		let lng = data[0].longitude;
+		let location = data[0].formattedAddress;
+		let newCampground = {name: name, price: price, image: image, description: desc, author: author, location: location, lat: lat, lng: lng};
+		// Create a new campground and save to DB
+		Campground.create(newCampground, (err, newlyCreated) => {
+			if(err) {
+				req.flash("error", "Something went wrong.");
+				console.log(err);
+			} else {
+				req.flash("success", "Campground has been added.");
+				console.log("Created the following campground:")
+				console.log(newlyCreated);
+				res.redirect("/campgrounds");   //although there are 2 of these routes, will redirect to GET by default
+			}			  
+		});
 	});
 });
 
@@ -81,18 +102,28 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 
 // 6. UPDATE route - updating details of an existing campground
 router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
-	// prevent user from sending code in description field 
-	req.body.campground.description = req.sanitize(req.body.campground.description);
-	//following method takes 3 arguments (id, newData, callback) // the newData is our input name from form 
-	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
-		if(err) {
-			req.flash("error", "You do not have permission to do that.");
-			console.log(err);
-			res.redirect("/campgrounds");
-		} else {
-			req.flash("success", "Campground has been updated.");
-			res.redirect("/campgrounds/" + req.params.id);
+	geocoder.geocode(req.body.location, function (err, data) {
+		if (err || !data.length) {
+		  req.flash('error', 'Invalid address');
+		  return res.redirect('back');
 		}
+		req.body.campground.lat = data[0].latitude;
+		req.body.campground.lng = data[0].longitude;
+		req.body.campground.location = data[0].formattedAddress;
+		// prevent user from sending code in description field 
+		req.body.campground.description = req.sanitize(req.body.campground.description);
+		//following method takes 3 arguments (id, newData, callback). The newData is our input name from form 
+		Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
+			if(err) {
+				req.flash("error", "You do not have permission to do that.");
+				console.log(err);
+				res.redirect("/campgrounds");
+			} else {
+				req.flash("success", "Successfully updated " + updatedCampground.name);
+				console.log(updatedCampground);
+				res.redirect("/campgrounds/" + req.params.id);
+			}
+		});
 	});
 });
 

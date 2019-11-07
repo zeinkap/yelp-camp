@@ -37,11 +37,9 @@ router.get("/login", (req, res) => {
 // Dont need to specify username/password (passport gets it from req.body and authenticates with whats in DB)
 router.post("/login", passport.authenticate("local", {
     successRedirect: "/campgrounds",     
-    failureRedirect: "/login"
+    failureRedirect: "/login",
+    failureFlash: true
 }), (req, res) => { // dont need callback code but will just keep to show middleware
-    if (failureRedirect) {
-        req.flash("error", "Invalid Username or Password. Please try again.");
-    }
 }); 
 // after authenticating, user is serialized and stores in session object provided by express-session.
 

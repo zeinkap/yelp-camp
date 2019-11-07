@@ -14,6 +14,8 @@
                     <li class="list-group-item">Info 3</li>
                 </ul>
             </div>
+            <br>
+            <div id="map"></div>    <!--to display google map-->
         </div>
         <div class="col-md-9">
             <figure class="figure">
@@ -30,7 +32,7 @@
                         <form class="delete-btn-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                         </form>
-                    <%  } %>
+                    <% } %>
                 </figcaption>
             </figure>
 
@@ -57,10 +59,39 @@
                         <% } %>
                     </div>
                     <hr>
-                <%});%>
+               <% }); %>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function initMap() {
+        var lat = <%= campground.lat %>;
+        var lng = <%= campground.lng %>;
+        var center = {lat: lat, lng: lng };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: center,
+            scrollwheel: false
+        });
+        var contentString = `
+        <strong><%= campground.name %><br />
+        <%= campground.location %></strong>
+        <p><%= campground.description %></p>
+        `
+        var infowindow = new google.maps.InfoWindow({
+        content: contentString
+        });
+        var marker = new google.maps.Marker({
+            position: center,
+            map: map
+        });
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQbQ3jTJSfFk3ehxJsZKH9Lwc6Q8Xn5Ts&callback=initMap"></script>
 
 <% include ../partials/footer %>
