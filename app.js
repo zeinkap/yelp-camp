@@ -26,6 +26,8 @@ const	commentRoutes			= require("./routes/comments"),
 
 // APP CONFIG
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
+// moment allows time since component
+app.locals.moment = require('moment');
 
 // telling express to use these packages
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 

@@ -25,8 +25,8 @@
                     <h4><a><%= campground.name %></a></h4>
                     <p><%= campground.description %></p>
                     <p>
-                        <em>Submitted By <%= campground.author.username %></em> 
-                    </p>
+                        <em>Submitted by: <%= campground.author.username %>, <%= moment(campground.createdAt).fromNow() %></em>
+                      </p>
                     <% if(currentUser && campground.author.id.equals(currentUser._id)) { %>
                         <a class="btn btn-warning btn-sm" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
                         <form class="delete-btn-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
@@ -44,11 +44,11 @@
                 <div class="card-header">Reviews</div>
                 <% campground.comments.forEach( (comment) => { %>
                     <div class="card-body">
-                        <span class="float-right">10 days ago</span>
+                        <span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
                         <h5 class="card-title"><%= comment.author.username %></h5>
                         <p class="card-text"><%= comment.text %></p>
                         <p class="card-text">
-                            <small class="text-muted">Last updated 3 mins ago</small>
+                            <small class="text-muted">Something will be added here in future</small>
                         </p>
                         <% if(currentUser && comment.author.id.equals(currentUser._id)) { %>
                             <a href="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/edit" 
