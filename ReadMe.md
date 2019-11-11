@@ -139,13 +139,21 @@
 * Update campground routes
 
 # Adding Moment to include time since created
-* This will applied for when a user adds/edits comments to campground
+* This will be applied for when a user adds/edits comments to campground
 * Install moment js
 * Require moment and add it to app.locals
 * Update campground and comment models
 * Use moment in show.ejs file
 
+# Adding admin user role
+* admin role successfully created only if user correctly enters admin code when signing up
+* admin role can edit/delete all campgrounds
+* admin role can edit/delete all commments
+
 # To Do
 * Add profile page for signed in user. Add profile avatar
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
 Add upload photo option
+* Allow user to upload campground image from local machine
+    * User can upload multiple photos of campground
+

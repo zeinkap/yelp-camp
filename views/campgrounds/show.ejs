@@ -19,17 +19,17 @@
         </div>
         <div class="col-md-9">
             <figure class="figure">
-                <img class="figure-img" src="<%= campground.image %>" alt="campground-image">
+                <img class="figure-img" id="show-fig-image" src="<%= campground.image %>" alt="campground-image">
                 <figcaption class="figure-caption">
                     <h5 class="float-right">$<%= campground.price %>/night</h5>
                     <h4><a><%= campground.name %></a></h4>
                     <p><%= campground.description %></p>
                     <p>
                         <em>Submitted by: <%= campground.author.username %>, <%= moment(campground.createdAt).fromNow() %></em>
-                      </p>
-                    <% if(currentUser && campground.author.id.equals(currentUser._id)) { %>
+                    </p>
+                    <% if(currentUser && campground.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin) { %>
                         <a class="btn btn-warning btn-sm" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
-                        <form class="delete-btn-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                        <form class="inline-it" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                         </form>
                     <% } %>
@@ -37,26 +37,26 @@
             </figure>
 
             <div class="card" style="max-width: 62rem;">
-                <div class="text-right">
-                    <a id="review-btn" class="btn btn-info" href="/campgrounds/<%= campground._id %>/comments/new">Leave a review</a>
+                <div class="card-header">
+                    <b>Reviews</b> 
+                    <a id="review-btn" class="btn btn-info btn-sm float-right" href="/campgrounds/<%= campground._id %>/comments/new">Leave a review</a>
                 </div>
-                <hr>
-                <div class="card-header">Reviews</div>
+                
                 <% campground.comments.forEach( (comment) => { %>
                     <div class="card-body">
-                        <span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
+                        <span class="float-right"><%= moment(comment.createdAt).fromNow() %></span>
                         <h5 class="card-title"><%= comment.author.username %></h5>
-                        <p class="card-text"><%= comment.text %></p>
-                        <p class="card-text">
-                            <small class="text-muted">Something will be added here in future</small>
-                        </p>
-                        <% if(currentUser && comment.author.id.equals(currentUser._id)) { %>
-                            <a href="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/edit" 
-                                class="btn btn-sm btn-warning">Edit</a>
-                            <form class="delete-btn-inline" action="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
-                                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
-                            </form>    
+                        <% if(currentUser && comment.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin) { %>
+                            <span class="float-right">
+                                <a href="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>/edit" 
+                                class="btn btn-sm btn-warning">Edit
+                                </a>
+                                <form class="inline-it" action="/campgrounds/<%= campground._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                </form>    
+                            </span>
                         <% } %>
+                        <p class="card-text"><%= comment.text %></p>
                     </div>
                     <hr>
                <% }); %>

@@ -3,17 +3,22 @@ const   express     = require("express"),
         User        = require("../models/user"),
         passport    = require("passport")
 
+// root route
 router.get("/", (req, res) => {
     res.render("landing");
 });
 
-//AUTH ROUTES
+// show register form
 router.get("/register", (req, res) => {
     res.render("register");
 });
 
+// handle signup logic
 router.post("/register", (req, res) => {
     let newUser = new User({username: req.body.username});
+    if(req.body.adminCode === 'secret123') {
+        newUser.isAdmin = true;
+    }
     User.register(newUser, req.body.password, (err, user) => {    // register is a method provided by passportLocalMongoose
         if(err) {
             req.flash("error", err.message);
@@ -30,9 +35,12 @@ router.post("/register", (req, res) => {
     });
 });
 
+// show login form
 router.get("/login", (req, res) => {
     res.render("login"); // message will come from what we stated in our isLoggedIn middleware
 });
+
+// handle login logic
 // passport addded as middleware (runs before callback, between start and end of route) 
 // Dont need to specify username/password (passport gets it from req.body and authenticates with whats in DB)
 router.post("/login", passport.authenticate("local", {
