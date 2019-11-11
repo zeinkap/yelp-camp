@@ -26,7 +26,7 @@ const	commentRoutes			= require("./routes/comments"),
 
 // APP CONFIG
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
-// moment allows time since component
+// moment will apply to all files
 app.locals.moment = require('moment');
 
 // telling express to use these packages
@@ -36,7 +36,7 @@ app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
 app.use(flash());	// must be added before passport config
-//seedDB();	// removes all campgrounds and adds 3 default campgrounds with a comment in each
+//seedDB();	// resets campgrounds/comments
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests

@@ -2,7 +2,7 @@
 * Add Landing Page
 * Add campgrounds page that lists all campgrounds
 
-# Each campground will have:
+# Each campground will have (for now):
 * Name
 * Image
 * description
@@ -56,7 +56,7 @@
 
 # Add Seeds file
 * Add a seeds.js file 
-* Run the seeds file every time starts
+* Run the seeds file every time app starts
 
 # Add the Comment model!
 * Fix errors
@@ -127,7 +127,7 @@
 # Adding google maps api
 * Sign up for a google dev account
 * Get Google Maps API Key
-    * Restrick Key
+    * Restrict Key
 * Enable Geocoding API
 * Get another key for Geocoding API
     * Add to application as ENV variable

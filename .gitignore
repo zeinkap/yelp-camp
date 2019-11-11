@@ -1,4 +1,5 @@
-#removing unnecessary files to show
+#dependencies
 package-lock.json
 /node_modules
+#api keys
 .env
