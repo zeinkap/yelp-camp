@@ -16,7 +16,9 @@
             </div>
             <br>
             <div id="map"></div>    <!--to display google map-->
+            <caption><%= campground.location %></caption>
         </div>
+        
         <div class="col-md-9">
             <figure class="figure">
                 <img class="figure-img" id="show-fig-image" src="<%= campground.image %>" alt="campground-image">
@@ -25,7 +27,7 @@
                     <h4><a><%= campground.name %></a></h4>
                     <p><%= campground.description %></p>
                     <p>
-                        <em>Submitted by: <%= campground.author.username %>, <%= moment(campground.createdAt).fromNow() %></em>
+                        <em>Submitted by: <a href="/users/<%= campground.author.id %>"><%= campground.author.username %></a>, <%= moment(campground.createdAt).fromNow() %></em>
                     </p>
                     <% if(currentUser && campground.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin) { %>
                         <a class="btn btn-warning btn-sm" href="/campgrounds/<%= campground._id %>/edit">Edit</a>

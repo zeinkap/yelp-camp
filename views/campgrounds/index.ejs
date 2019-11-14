@@ -1,7 +1,5 @@
 <% include ../partials/header %>
 
-
-
 <div class="container-fluid">
     <div class="container">
         <header class="jumbotron">
@@ -9,7 +7,24 @@
             <div class="col-auto">
                 <h1>Welcome To YelpCamp!</h1>
                 <p>View our hand-picked campgrounds from all over North America</p>
-                <a class="btn btn-primary" href="/campgrounds/new">Add New Campground</a>
+                <p>
+                    <a class="btn btn-primary" href="/campgrounds/new">Add New Campground</a>
+                </p>
+                    <!--Search bar-->
+                    <% if (noMatch !== null) { %>
+                        <p>
+                            <form action="/campgrounds" method="GET" class="form-inline my-2 my-lg-0">
+                                <div class="form-group">
+                                    <label for="search-input"></label>
+                                    <input type="text" name="search" class="form-control mr-sm-2" placeholder="Campground search..." aria-label="Search">
+                                    <input type="submit" value="Search" class="btn btn-success">
+                                </div>
+                            </form>
+                            <div id="no-search-results">
+                                <h4><%= noMatch %></h4>
+                            </div>
+                        </p> 
+                    <% } %> 
             </div>
         </div>
         </header>

@@ -12,6 +12,11 @@
     object-fit: cover;
 }
 
+.avatar-img {
+    width: 300px;
+    height: auto;
+}
+
 #navbar-brand-img {
     width: 40px;
     height: 40px;

@@ -33,7 +33,19 @@
     
     <div id="landing-header">
  		<h1>Welcome to YelpCamp!</h1>
-		<a href="/campgrounds" class="btn btn-lg btn-success">View All Campgrounds</a>
+        <a href="/campgrounds" class="btn btn-lg btn-success">View All Campgrounds</a>
+        <p>
+            <!--Search bar-->
+            <form id="search-form" action="/campgrounds" method="GET" class="form-inline my-2 my-lg-0">
+                <div class="form-group">
+                    <label for="search-input"></label>
+                    <input type="text" name="search" class="form-control mr-sm-2" placeholder="Campground search..." aria-label="Search">
+                    
+                    <input type="submit" value="Search" class="btn btn-info">
+                </div>
+            </form>
+            <small>Search by campground name or location</small>
+        </p>
     </div>
     
     <ul class="slideshow">

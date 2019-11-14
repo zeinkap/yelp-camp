@@ -150,6 +150,12 @@
 * admin role can edit/delete all campgrounds
 * admin role can edit/delete all commments
 
+# Adding user profile
+* user role signup page will also have first name, last name, email and avatar
+
+# Add fuzzy search
+* user can search for a campground by name and location
+
 # To Do
 * Add profile page for signed in user. Add profile avatar
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.

@@ -2,6 +2,16 @@ body {
     background-color: #000;
 }
 
+.center-it {
+    text-align: center;
+    
+}
+
+#search-form {
+    max-width: 14%;
+    margin: 0 auto;
+  }
+
 #landing-header {
     z-index: 1;     /* forces these elements to be in front of background images */
     position: relative;     /* must be set to relative to use z-index */
@@ -10,6 +20,10 @@ body {
 }
 
 #landing-header h1 {
+    color: #fff;
+}
+
+#landing-header small {
     color: #fff;
 }
 

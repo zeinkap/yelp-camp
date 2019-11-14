@@ -18,17 +18,12 @@
 
 <body>
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <a class="navbar-brand" href="/campgrounds">
+    <a class="navbar-brand" href="/">
       <img id="navbar-brand-img" src="/images/camp-logo.png" alt="camp logo"> 
       YelpCamp
     </a>
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ml-auto"> <!-- ml-auto moves everything to the right-->
-        <!--Search bar is non-functional-->
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
         <% if(!currentUser) { %>
           <li class="nav-item">
               <a class="nav-link" href="/login">Login</a>
