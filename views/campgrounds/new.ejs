@@ -1,27 +1,26 @@
 <% include ../partials/header %>
 
-<h1 class="text-center">Add New Campground</h1>
+<h1 class="text-center">Create a New Campground</h1>
 <br>
 <div class="container-fluid">
   <div class="row justify-content-center align-items-center">
     <div class="col-auto">
-      <form class="form-group" action="/campgrounds" method="POST">
+      <form class="form-group" action="/campgrounds" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="name">Name</label>
-          <input class="form-control form-control-lg" type="text" name="name" placeholder="Name" required>
+          <input class="form-control form-control-lg" type="text" name="campground[name]" placeholder="Name" required>
         </div>
         <div class="form-group">
-          <label for="image">Upload Image</label>
-          <input class="form-control form-control-lg" type="text" name="image" placeholder="Image Url or">
-          <input type="file" class="form-control-file border">
+          <label for="image">Image</label>
+          <input type="file" id="image" name="campground[image]" class="form-control-file border" accept="image/*">
         </div>
         <div class="form-group">
           <label for="price">Price</label>
-          <input class="form-control form-control-lg" type="number" name="price" placeholder="19.99" min="1.00" max="999.99" step="0.01" required>
+          <input class="form-control form-control-lg" type="number" name="campground[price]" placeholder="19.99" min="1.00" max="999.99" step="0.01" required>
         </div>
         <div class="form-group">
           <label for="description">Description</label>
-          <textarea class="form-control form-control-lg" rows="10" name="description" placeholder="California’s Sierra Nevada mountains." maxlength="300"></textarea>
+          <textarea class="form-control form-control-lg" rows="10" name="campground[description]" placeholder="California’s Sierra Nevada mountains." maxlength="300"></textarea>
         </div>
         <div class="form-group">
           <label for="location">Location</label>
