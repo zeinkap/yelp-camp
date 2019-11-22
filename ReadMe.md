@@ -160,7 +160,8 @@
 * Sign up for cloudinary
 * Install multer and cloudinary
 * Configure multer and cloudinary
-* 
+* Inlcude another input for img file upload
+* Update routes
 
 
 # To Do

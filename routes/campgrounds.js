@@ -20,21 +20,21 @@ const storage = multer.diskStorage({
 	filename: (req, file, callback) => {
 		callback(null, Date.now() + file.originalname);	// naming file
 	}
-	});
-	const imageFilter = (req, file, cb) => {
-	  // accept image files only
-	  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {	
-		  return cb(new Error('Only image files are allowed!'), false);
-		}
-		cb(null, true);
-	};
-	let upload = multer({ storage: storage, fileFilter: imageFilter});
-  
-	cloudinary.config({ 
-		cloud_name: 'zeinkap', 
-		api_key: process.env.CLOUDINARY_API_KEY, 
-		api_secret: process.env.CLOUDINARY_API_SECRET
-	});
+});
+const imageFilter = (req, file, cb) => {
+	// accept image files only
+	if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {	
+		return cb(new Error('Only image files are allowed!'), false);
+	}
+	cb(null, true);
+};
+let upload = multer({ storage: storage, fileFilter: imageFilter });
+
+cloudinary.config({ 
+	cloud_name: 'zeinkap', 
+	api_key: process.env.CLOUDINARY_API_KEY, 
+	api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // 1. INDEX route - shows all campgrounds
 router.get("/", (req, res) => {
@@ -69,43 +69,35 @@ router.get("/", (req, res) => {
 
 // 2. CREATE route - add new campground to DB
 router.post("/", middleware.isLoggedIn, upload.single('image'), (req, res) => {
-	// get data from form and add to campgronuds array     
-	let name = req.body.campground.name;
-	let price = req.body.campground.price;
-	let image = req.body.campground.image;
-	let author = {
-		id: req.user._id,
-		username: req.user.username
-	}
-	let desc = req.body.campground.description;
-	desc = req.sanitize(desc);	// sanitize description field
-
+	req.body.campground.description = req.sanitize(req.body.campground.description);	// sanitize description field
+	
 	geocoder.geocode(req.body.location, (err, data) => {
 		if (err || !data.length) {
 			req.flash('error', 'Invalid address');
 			console.log(err);
 			return res.redirect('back');
 		}
-		let lat = data[0].latitude;
-		let lng = data[0].longitude;
-		let location = data[0].formattedAddress;
-		
+		req.body.campground.lat = data[0].latitude;
+		req.body.campground.lng = data[0].longitude;
+		req.body.campground.location = data[0].formattedAddress;
+
 		// Create a new campground and save to DB
-		cloudinary.v2.uploader.upload(req.file.path, (result) => {
+		cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
+			if(err) {
+				req.flash('error', err.message);
+				return res.redirect('back');
+			}
 			// add cloudinary url for the image to the campground object under image property
 			req.body.campground.image = result.secure_url;
 			// add image's public_id to campground object
 			req.body.campground.imageId = result.public_id;
 			// add author to campground
 			req.body.campground.author = {
-			  id: req.user._id,
-			  username: req.user.username
+				id: req.user._id,
+				username: req.user.username
 			}
 
-			// capture and store all objects in one 
-			let newCampground = {name: name, image: image, price: price, description: desc, author: author, location: location, lat: lat, lng: lng};
-
-			Campground.create(newCampground, (err, campground) => {
+			Campground.create(req.body.campground, (err, campground) => {
 				if(err) {
 					req.flash("error", err.message);
 					console.log(err);
@@ -162,24 +154,44 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), (req, res) => {
 	geocoder.geocode(req.body.location, function (err, data) {
 		if (err || !data.length) {
-		  req.flash('error', 'Invalid address');
-		  return res.redirect('back');
+			req.flash("error", "Invalid address");
+			return res.redirect("back");
 		}
 		req.body.campground.lat = data[0].latitude;
 		req.body.campground.lng = data[0].longitude;
 		req.body.campground.location = data[0].formattedAddress;
-		// prevent user from sending code in description field 
-		req.body.campground.description = req.sanitize(req.body.campground.description);
-		//following method takes 3 arguments (id, newData, callback). The newData is our input name from form 
-		Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
+
+		//following method takes 3 arguments (id, newData, callback).
+		Campground.findById(req.params.id, async (err, updatedCampground) => {
 			if(err) {
 				req.flash("error", "You do not have permission to do that.");
 				console.log(err);
-				res.redirect("/campgrounds");
+				return res.redirect("back");
 			} else {
-				req.flash("success", "Successfully updated " + updatedCampground.name);
+				if (req.file) {
+					try {
+						await cloudinary.v2.uploader.destroy(updatedCampground.imageId);
+						let result = await cloudinary.v2.uploader.upload(req.file.path);
+						updatedCampground.imageId = result.public_id;
+						updatedCampground.image = result.secure_url;
+					} catch(err) {
+						req.flash("error", err.message);
+						return res.redirect("back");
+					}
+				}
+				// update fields
+				updatedCampground.name = req.body.campground.name;
+				updatedCampground.price = req.body.campground.price;
+				req.body.campground.description = req.sanitize(req.body.campground.description);
+				updatedCampground.description = req.body.campground.description;
+				updatedCampground.lat = req.body.campground.lat;
+				updatedCampground.lng = req.body.campground.lng;
+				updatedCampground.location = req.body.campground.location;
+
+				updatedCampground.save();
+				req.flash("success", `Updated ${updatedCampground.name}`);
 				console.log(updatedCampground);
-				res.redirect("/campgrounds/" + req.params.id);
+				return res.redirect("/campgrounds/" + updatedCampground._id);
 			}
 		});
 	});
@@ -187,16 +199,24 @@ router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), 
 
 // 7. DESTROY route - Removing campground 
 router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
-	Campground.findByIdAndRemove(req.params.id, (err, deletedCampground) => {
+	Campground.findById(req.params.id, async (err, deletedCampground) => {
 		if(err) {
-			req.flash("error", "You do not have permission to do that.");
+			req.flash("error", err.message);
 			console.log(err);
-			res.redirect("/campgrounds");
-		} else {
-			req.flash("success", deletedCampground.name + " has been deleted.");
+			return res.redirect("back");
+		} 
+		try {
+			await cloudinary.v2.uploader.destroy(deletedCampground.imageId);
+			deletedCampground.remove();
+			req.flash("success", `Deleted ${deletedCampground.name}`);
 			console.log("Deleted the following campground:");
 			console.log(deletedCampground);
-			res.redirect("/campgrounds");
+			return res.redirect("/campgrounds");
+		} catch(err) {
+			if(err) {
+				req.flash("error", err.message);
+				return res.redirect("back");
+			}
 		}
 	});
 });
