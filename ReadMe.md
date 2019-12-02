@@ -168,8 +168,7 @@
 * Add profile page for signed in user. Add profile avatar
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
 Add upload photo option
-* Allow user to upload campground image from local machine
-    * User can upload multiple photos of campground
+* User can upload multiple photos of campground
 
 
 
