@@ -7,17 +7,20 @@
         <div class="col-auto">
             <form class="form-group" action="/login" method="POST">
                 <div class="form-group">
-                    <label for="username">Enter username</label>
-                    <input type="text" class="form-control" name="username" placeholder="username">
+                    <label for="username" hidden>Enter username</label>
+                    <input type="text" class="form-control" name="username" placeholder="Username" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Enter password</label>
-                    <input type="password" class="form-control" name="password" placeholder="password">
+                    <label for="password" hidden>Enter password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
                 </div>
                 <button class="btn btn-primary" type="submit">Login</button>
             </form>
             <p>
-                Don't have an account? <a href="/register">Sign up here</a>
+                Don't have an account? <a href="/sign-up">Sign up here</a>
+            </p>
+            <p>
+                <a href="#">Forgot password?</a>
             </p>
         </div>
     </div>

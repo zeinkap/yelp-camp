@@ -12,7 +12,7 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 			req.flash("error", "Something went wrong.");
 			console.log(err);
 		} else {
-			res.render("comments/new", {campground: campground});
+			res.render("comments/new", { campground });	// rendering page with the campground object that was found
 		}
 	});
 });

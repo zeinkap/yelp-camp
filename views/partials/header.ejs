@@ -11,8 +11,8 @@
 
 <script>
   // disabling button on submit
-  $('form').submit(function(){
-    $('input[type=submit]', this).attr('disabled', 'disabled');
+  $("form").submit(function(){
+    $("input[type=submit]", this).attr("disabled", "disabled");
   });
 </script>
 
@@ -26,18 +26,31 @@
       <ul class="navbar-nav ml-auto"> <!-- ml-auto moves everything to the right-->
         <% if(!currentUser) { %>
           <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sign-up">Sign Up</a>
+          </li>
+          <% }  else { %>
+            <div class="dropdown show">
+              <a href="#" class="btn btn-info dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Notifications <span class="badge"><%= notifications.length %></span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="/notifications">View past notifications</a>
+                <% notifications.forEach( (notification) => { %>
+                    <a class="dropdown-item" href="/notifications/<%= notification.id %>">
+                      <%= notification.username %> created a new campground
+                    </a>
+                <% }); %>
+              </div>
+            </div>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/profile/<%= currentUser.id %>">Signed in as: <%= currentUser.username %></a> 
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/register">Sign Up</a>
-            </li>
-        <% }  else { %>
-          <li class="nav-item">
-              <a class="nav-link" href="#">Signed in as: <%= currentUser.username %></a> 
-          </li>
-          <li class="nav-item">
               <a class="nav-link" href="/logout">Logout</a>
-          </li>
+            </li>
         <% } %>
       </ul>
       

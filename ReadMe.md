@@ -79,7 +79,7 @@
 * Install all packages needed for auth (passport, passport-local, passport-local-mongoose)
 * Define User schema/model
 * Configure Passport
-* Add register routes and template
+* Add signup routes and template
 * Add login routes and template
 * Add logout route
 * Prevent user from adding comment if not signed in
@@ -163,12 +163,21 @@
 * Inlcude another input for img file upload
 * Update routes
 
+# Adding notifications
+* Warning - Methodology used in applying this feature is not very scalable. Issues will be encountered when dealing with 1000+ users
+* background jobs suggested to use
+
+# Changes made on 01/02/2020
+* fixed description field on edit campground form to show previous value 
+* Changed filename from register.ejs to sign-up.ejs
+* Fixed some errors on adding campground route
+
 
 # To Do
-* Add profile page for signed in user. Add profile avatar
+* Add forgot password link for user
+* Add notifications for new comments 
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
-Add upload photo option
-* User can upload multiple photos of campground
+* User can upload multiple photos of campground rather than just one
 
 
 

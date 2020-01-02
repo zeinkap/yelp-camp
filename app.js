@@ -17,6 +17,7 @@ const	express 				= require("express"),
 // requiring models
 const	Campground 				= require("./models/campground"),
 		Comment					= require("./models/comment"),
+		notifications			= require("./models/notification"),
 		User					= require("./models/user")
 		
 // requiring routes
@@ -27,7 +28,7 @@ const	commentRoutes			= require("./routes/comments"),
 // APP CONFIG
 mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
 // moment will apply to all files
-app.locals.moment = require('moment');
+app.locals.moment = require("moment");
 
 // telling express to use these packages
 app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
@@ -36,7 +37,7 @@ app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
 app.use(flash());	// must be added before passport config
-//seedDB();	// resets campgrounds/comments
+//seedDB();	// reset and repopulate campground and comment DB
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests
@@ -54,9 +55,18 @@ passport.use(new LocalStrategy(User.authenticate()));	//authenticate() is a meth
 passport.serializeUser(User.serializeUser());	// encodes session and puts it back in
 passport.deserializeUser(User.deserializeUser());	// decoding the session 
 
-// passing user to every single template using res.locals
-app.use((req, res, next) => {
+// res.locals variable allows to render on all pages. req.user comes from passport
+app.use( async function(req, res, next) {
 	res.locals.currentUser = req.user;	
+	if(req.user) {
+		try {
+			// populating only notications that are not read yet
+			let user = await User.findById(req.user._id).populate("notifications", null, { isRead: false }).exec();	
+			res.locals.notifications = user.notifications.reverse();	// reverse() is to order by descending
+		} catch(err) {
+			console.log(err.message);
+		}
+	}
 	// defining two differ vars for our flash messages
 	res.locals.error = req.flash("error");	
 	res.locals.success = req.flash("success");	

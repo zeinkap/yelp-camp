@@ -1,10 +1,12 @@
-const	express 		= require('express'),
+const	express 		= require("express"),
 		router 			= express.Router(),	// adding all the routes to the router object
-		Campground 		= require('../models/campground'),
-		middleware		= require('../middleware'),	// no need to include index.js 'cause its a special file already required in express node_modules
-		NodeGeocoder 	= require('node-geocoder'),
-		multer			= require('multer'),
-		cloudinary 		= require('cloudinary')
+		Campground 		= require("../models/campground"),
+		Notification	= require("../models/notification"),
+		User        	= require("../models/user"),
+		middleware		= require("../middleware"),	// no need to include index.js 'cause its a special file already required in express node_modules
+		NodeGeocoder 	= require("node-geocoder"),
+		multer			= require("multer"),
+		cloudinary 		= require("cloudinary")
  
 // configuration for google maps
 const options = {
@@ -58,7 +60,7 @@ router.get("/", (req, res) => {
 		//Get all campgrounds from DB
 		Campground.find({}, (err, allCampgrounds) => {
 		if(err) {
-			req.flash("error", "Something went wrong.");
+			req.flash("error", err.message);
 			console.log(err);
 		} else {
 			res.render("campgrounds/index", {campgrounds : allCampgrounds, noMatch: noMatch});
@@ -68,24 +70,23 @@ router.get("/", (req, res) => {
 });
 
 // 2. CREATE route - add new campground to DB
-router.post("/", middleware.isLoggedIn, upload.single('image'), (req, res) => {
+router.post("/", middleware.isLoggedIn, upload.single("image"), async function(req, res) {
 	req.body.campground.description = req.sanitize(req.body.campground.description);	// sanitize description field
 	
 	geocoder.geocode(req.body.location, (err, data) => {
 		if (err || !data.length) {
-			req.flash('error', 'Invalid address');
+			req.flash("error", err.message);
 			console.log(err);
-			return res.redirect('back');
+			return res.redirect("back");
 		}
 		req.body.campground.lat = data[0].latitude;
 		req.body.campground.lng = data[0].longitude;
 		req.body.campground.location = data[0].formattedAddress;
 
-		// Create a new campground and save to DB
-		cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
+		cloudinary.v2.uploader.upload(req.file.path, async function(err, result) {
 			if(err) {
-				req.flash('error', err.message);
-				return res.redirect('back');
+				req.flash("error", err.message);
+				return res.redirect("back");
 			}
 			// add cloudinary url for the image to the campground object under image property
 			req.body.campground.image = result.secure_url;
@@ -97,18 +98,31 @@ router.post("/", middleware.isLoggedIn, upload.single('image'), (req, res) => {
 				username: req.user.username
 			}
 
-			Campground.create(req.body.campground, (err, campground) => {
-				if(err) {
-					req.flash("error", err.message);
-					console.log(err);
-					return res.redirect('back');
-				} else {
-					req.flash("success", "Campground has been added.");
-					console.log("Created the following campground:");
-					console.log(campground);
-					res.redirect("/campgrounds/" + campground._id);   //although there are 2 of these routes, will redirect to GET by default
-				}			  
-			});
+			// Create a new campground and save to DB
+			try {
+				let campground = await Campground.create(req.body.campground);
+				let user = await User.findById(req.user._id).populate("followers").exec();
+				let newNotification = {
+					username: req.user.username,
+					campgroundId: campground.id
+				}
+				for (const follower of user.followers) {
+					let notification = await Notification.create(newNotification);
+					follower.notifications.push(notification);	// pushing into all the follower's notifications
+					follower.save();
+				}
+
+				//redirect back to campgrounds page
+				req.flash("success", "Campground has been added.");
+				console.log("Created the following campground:");
+				console.log(campground);
+				res.redirect(`/campgrounds/${campground._id}`);
+			} catch(err) {
+				req.flash("error", err.message);
+				console.log(err);
+				return res.redirect("back");
+			}
+
 		});
 	});
 });
@@ -118,18 +132,17 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
     res.render("campgrounds/new");
 });
 
-// 4. SHOW route - shows info about a specific campground. ***This should always come after NEW route or else it will overide it. id comes from mongo DB
+// 4. SHOW route - shows info about a specific campground
 router.get("/:id", (req, res) => {	
 	//find campground with provided ID from url and using mongoose function findbyid
 	//populating comments array (which was associated with campground) so it's not just an id
-	Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {	//foundCampground serves as placeholder for our data that we get back from DB
+	Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {
 		if(err || !foundCampground) {
 			req.flash('error', 'Sorry, that campground does not exist!');
 			console.log(err);
 			return res.redirect("/campgrounds");
 		} else {
-			//render show template with that campground
-			res.render("campgrounds/show", {campground: foundCampground});	//campground is just name we give, more importantly the value of id we found will be displayed
+			res.render("campgrounds/show", {campground: foundCampground});
 		}
 	});
 });
@@ -138,7 +151,7 @@ router.get("/:id", (req, res) => {
 router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 	Campground.findById(req.params.id, (err, foundCampground) => {
 		if(!foundCampground) {
-			return res.status(400).send("Item not found.");   // will break out of middleware if its true
+			return res.status(400).send("Campground not found.");
 		}
 		if(err) {
 			req.flash("error", "You do not have permission to do that.");
@@ -150,9 +163,9 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 	});
 });
 
-// 6. UPDATE route - updating details of an existing campground
+// 6. UPDATE route - updating details an existing campground
 router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), (req, res) => {
-	geocoder.geocode(req.body.location, function (err, data) {
+	geocoder.geocode(req.body.location, (err, data) => {
 		if (err || !data.length) {
 			req.flash("error", "Invalid address");
 			return res.redirect("back");
@@ -161,7 +174,6 @@ router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), 
 		req.body.campground.lng = data[0].longitude;
 		req.body.campground.location = data[0].formattedAddress;
 
-		//following method takes 3 arguments (id, newData, callback).
 		Campground.findById(req.params.id, async (err, updatedCampground) => {
 			if(err) {
 				req.flash("error", "You do not have permission to do that.");
