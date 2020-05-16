@@ -26,7 +26,12 @@ const	commentRoutes			= require("./routes/comments"),
 		indexRoutes				= require("./routes/index")
 
 // APP CONFIG
-mongoose.connect(url, {useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false});		//connects to best environment, has 2 outcomes
+mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+	.then(() => console.log('DB Connected!'))
+	.catch(err => {
+	console.log(`DB Connection Error: ${err.message}`);
+	});		
+
 // moment will apply to all files
 app.locals.moment = require("moment");
 
@@ -37,7 +42,7 @@ app.use(methodOverride("_method"));	//argument is what to look for in url
 app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
 app.use(flash());	// must be added before passport config
-//seedDB();	// reset and repopulate campground and comment DB
+//seedDB();	// reset and repopulate campgrounds
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests

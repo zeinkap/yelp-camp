@@ -2,12 +2,12 @@
 
 <div class="row">
     <div class="col-md-4">
-        <img src="<%= user.avatar %>" class="avatar-img" alt="user-profile-image">
+        <img src="<%= currentUser.avatar %>" class="avatar-img" alt="user-profile-image">
     </div>
 
     <div class="col-md-8">
-        <h1><%= `${user.firstName} ${user.lastName}` %></h1>
-        <p><%= user.email %></p>
+        <h1><%= `${currentUser.firstName} ${currentUser.lastName}` %></h1>
+        <p><%= currentUser.email %></p>
         <h4>Bio:</h4>
         <p> 
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum ad, praesentium dicta unde, deleniti mollitia libero ratione corporis animi recusandae reprehenderit qui est. Odio a soluta consequuntur dicta iure fuga.
@@ -18,7 +18,7 @@
         <h4>Location:</h4>
         <p>Queens, NY, USA </p>
 
-        <h4><%= user.username %>'s campground postings:</h4>
+        <h4><%= currentUser.username %>'s campground postings:</h4>
         <ul class="list-unstyled">
         <% campgrounds.forEach((campground) => { %>
             <li><a href="/campgrounds/<%= campground.id %>"><%= campground.name %></a></li>
