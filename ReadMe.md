@@ -182,8 +182,6 @@
 * User can upload multiple photos of campground rather than just one
 * Add appropriate tab titles for each page
 
-# BUGS!!!
-* deleteCampground method is not working shows error "TypeError: Assignment to constant variable."
 
 
 
