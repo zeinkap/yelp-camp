@@ -1,18 +1,17 @@
-require("dotenv").config();	//package that allows us to allow env variables to persist via .env file
+require("dotenv").config();		// to allow env variables to persist via .env file
+
 const	express 				= require("express"),
 		app 					= express(),
-		bodyParser 				= require("body-parser"),
-		request 				= require("request"),
+		path					= require("path"),
 		methodOverride 			= require("method-override"),
-		expressSanitizer		= require("express-sanitizer"),
 		mongoose 				= require("mongoose"),
+		morgan					= require("morgan"),	// HTTP request logger middleware
 		flash					= require("connect-flash"),
-		seedDB					= require("./seeds"),
 		passport				= require("passport"),
 		LocalStrategy			= require("passport-local"),
 		passportLocalMongoose	= require("passport-local-mongoose"),
-		url 					= process.env.DATABASE_URL || "mongodb://localhost:27017/yelp_camp",
-		port 					= process.env.PORT || 3000
+		URL 					= process.env.DATABASE_URL || "mongodb://localhost:27017/yelp_camp",
+		PORT 					= process.env.PORT || 3000
 
 // requiring models
 const	Campground 				= require("./models/campground"),
@@ -23,26 +22,32 @@ const	Campground 				= require("./models/campground"),
 // requiring routes
 const	commentRoutes			= require("./routes/comments"),
 		campgroundRoutes		= require("./routes/campgrounds"),
-		indexRoutes				= require("./routes/index")
+		indexRoutes				= require("./routes/index"),
+		restCampgroundRoutes	= require("./routes/restCampgrounds"),
+		restIndex				= require("./routes/restIndex")
 
 // APP CONFIG
-mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
-	.then(() => console.log('DB Connected!'))
-	.catch(err => {
-	console.log(`DB Connection Error: ${err.message}`);
-	});		
+mongoose.connect(URL, { 
+	useUnifiedTopology: true, 
+	useNewUrlParser: true, 
+	useCreateIndex: true, 
+})
+	.then(() => console.log('Database is connected'))
+	.catch(err => console.log(`Connection Error: ${err.message}`));	
 
-// moment will apply to all files
-app.locals.moment = require("moment");
-
-// telling express to use these packages
-app.use(express.static(__dirname + "/public"));	// tells express to look in public directory for custom stylesheets. dirname refers to root YelpCamp folder 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(methodOverride("_method"));	//argument is what to look for in url
-app.use(expressSanitizer());	// this must go after bodyParser
 app.set("view engine", "ejs"); 
+app.set("views", path.join(__dirname, '/views'));	
+
+// app.use() is applied to all requests
+app.use(express.static(path.join(__dirname, 'public')));	// to serve files from public directory
+app.use(express.urlencoded({ extended: true }));	// to parse req.body as url encoded data
+//app.use(express.json());
+app.use(methodOverride("_method"));	
+app.use(morgan('tiny'));	// using predefined format string
 app.use(flash());	// must be added before passport config
-//seedDB();	// reset and repopulate campgrounds
+
+// creating local variable to apply to all files
+app.locals.moment = require("moment");
 
 //PASSPORT CONFIG
 app.use(require("express-session")({	// creates session for every unique user across multiple http requests
@@ -60,28 +65,35 @@ passport.use(new LocalStrategy(User.authenticate()));	//authenticate() is a meth
 passport.serializeUser(User.serializeUser());	// encodes session and puts it back in
 passport.deserializeUser(User.deserializeUser());	// decoding the session 
 
-// res.locals variable allows to render on all pages. req.user comes from passport
-app.use( async function(req, res, next) {
-	res.locals.currentUser = req.user;	
-	if(req.user) {
+app.use(async(req, res, next) => {
+	res.locals.currentUser = req.user;		// req.user comes from passport and we need currentUser var for front end
+	if (req.user) {
 		try {
 			// populating only notications that are not read yet
 			let user = await User.findById(req.user._id).populate("notifications", null, { isRead: false }).exec();	
-			res.locals.notifications = user.notifications.reverse();	// reverse() is to order by descending
+			res.locals.notifications = user.notifications.reverse();	// reverse to order by desc and see most recent first
 		} catch(err) {
 			console.log(err.message);
 		}
 	}
-	// defining two differ vars for our flash messages
+	// for the flash messages
 	res.locals.error = req.flash("error");	
 	res.locals.success = req.flash("success");	
-	next();	// to make this middleware move to next code
+	return next();	// to move to next middleware/ route handler
 });
 
+// mounting routes
 app.use("/", indexRoutes);
-app.use("/campgrounds", campgroundRoutes);	//all routes in this file will have /campgrounds appended to it
+app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
+app.use("/api", restIndex)
+app.use("/api/campgrounds", restCampgroundRoutes)
 
-app.listen(port, () => {
-    console.log("Listing on port 3000");
+// if user vists any page outside of specified routes
+app.use((req, res) => {
+	res.status(404).send('Page not found.')
+})
+
+app.listen(PORT, () => {
+    console.log(`App is live on port ${PORT}`);
 });

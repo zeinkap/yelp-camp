@@ -172,12 +172,19 @@
 * Changed filename from register.ejs to sign-up.ejs
 * Fixed some errors on adding campground route
 
+# Adding payment option using Stripe API
+
 
 # To Do
 * Add forgot password link for user
 * Add notifications for new comments 
 * for user reviews: Add star rating with date of when review posted. Add useful button with bulb icon and flag inappropriate button. Show avatar next to username.
 * User can upload multiple photos of campground rather than just one
+* Add appropriate tab titles for each page
+
+# BUGS!!!
+* deleteCampground method is not working shows error "TypeError: Assignment to constant variable."
+
 
 
 

@@ -1,4 +1,4 @@
-<% include ../partials/header %>
+<%- include('../partials/header') %>
 
 <div class="container-fluid">
     <div class="container">
@@ -35,7 +35,7 @@
         <% campgrounds.forEach((campground) => { %>
             <div class="col-md-4 text-center"> 
                 <figure class="figure" id="figure-landing">
-                    <img src="<%= campground.image %>" id="img-landing-page" class="figure-img">
+                    <img src="<%= campground.image %>" id="img-homepage" class="figure-img">
                     <h4><%= campground.name %></h4>
                     <a href="/campgrounds/<%= campground._id %>" class="btn btn-info">More info</a>
                 </figure>
@@ -45,4 +45,4 @@
     </div>
 </div>
 
-<% include ../partials/footer %>
+<%- include('../partials/footer') %>

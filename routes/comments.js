@@ -1,11 +1,18 @@
 const	express 		= require("express"),
-		router 			= express.Router({mergeParams: true}),	//this merges params from campground and comments, so :id can be defined 
+		router 			= express.Router({mergeParams: true}),	//merges params from campground and comments so :id can be defined 
 		Campground 		= require("../models/campground"),
-		Comment 		= require("../models/comment"),
-		middleware		= require("../middleware")	// dont need to include index.js cuz its a special file already required in express node_modules
+		Comment 		= require("../models/comment")
+		
+const { 
+	checkCommentOwnership, 
+	isLoggedIn, 
+	isPaid 
+} = require("../middleware");
+
+//router.use(isLoggedIn, isPaid);
 
 //NEW route
-router.get("/new", middleware.isLoggedIn, (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
 	//find campground by id
 	Campground.findById(req.params.id, (err, campground) => {
 		if(err) {
@@ -18,7 +25,7 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 });
 
 //CREATE Route 
-router.post("/", middleware.isLoggedIn, (req, res) => {	// adding middleware here too, so comment cannot be inserted via postman
+router.post("/", isLoggedIn, (req, res) => {	// adding middleware here too, so comment cannot be inserted via postman
 	//lookup campground using id
 	Campground.findById(req.params.id, (err, campground) => {
 		if(err) {
@@ -46,7 +53,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {	// adding middleware her
 });
 
 // EDIT route
-router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
+router.get("/:comment_id/edit", checkCommentOwnership, (req, res) => {
 	Comment.findById(req.params.comment_id, (err, foundComment) => {
 		if(err) {
 			req.flash("error", "You do not have permission to do that.");
@@ -59,7 +66,7 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => 
 });
 
 // UPDATE route
-router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
+router.put("/:comment_id", checkCommentOwnership, (req, res) => {
 	Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, updatedComment) => {
 		if(err) {
 			req.flash("error", "You do not have permission to do that.");
@@ -73,7 +80,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
 });
 
 //DESTROY route - delete comment
-router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
+router.delete("/:comment_id", checkCommentOwnership, (req, res) => {
 	Comment.findByIdAndRemove(req.params.comment_id, (err, deletedComment) => {
 		if(err) {
 			req.flash("error", "You do not have permission to do that.");

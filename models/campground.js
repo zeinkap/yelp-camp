@@ -1,30 +1,49 @@
 const mongoose = require("mongoose");
+const Comment = require("./comment");
+const Schema = mongoose.Schema;
 
-//declare schema and model then export.
-const campgroundSchema = new mongoose.Schema({
-	name: String,
-	price: String,
-	image: String,
+const campgroundSchema = new Schema({
+	name: {
+		type: String,
+		required: [true, 'campground must have a name'],
+		trim: true,
+		maxlength: 100
+	},
+	price: {
+		type: String,
+		required: [true, 'campground must have a price']
+	},
+	image: {
+		type: String
+	},
 	imageId: String,
-	description: String,
-	location: String,
+	description: {
+		type: String,
+		required: [true, 'campground must have a description']
+	},
+	location: {
+		type: String,
+		required: [true, 'campground must have a location']
+	},
 	lat: Number,
 	lng: Number,
 	createdAt: { type: Date, default: Date.now },
 	author: {
 		id: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: "User"
 		},
 		username: String 
 	},
-	//need to associate comment with campground.
-	comments: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment"
-		}
-	]
+	comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }]
 });
 
-module.exports = mongoose.model("Campground", campgroundSchema); //now the model is being sent out of the file
+// using post middleware for deleting associated data
+campgroundSchema.post('findOneAndDelete', async (campground) => {
+	if(campground.comments.length) {
+		const res = await Comment.deleteMany({ _id: { $in: campground.comments } })
+		console.log(res);
+	}
+})
+
+module.exports = mongoose.model("Campground", campgroundSchema);

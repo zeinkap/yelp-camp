@@ -1,6 +1,6 @@
 const   express     = require("express"),
-        router      = express.Router();
-
+        router      = express.Router()
+        
 const {
     isLoggedIn, 
     asyncErrorHandler
@@ -17,8 +17,10 @@ const {
     seeOtherUserProfiles, 
     followUser, 
     getNotifications, 
-    handleNotifications 
-} = require('../controllers/index')
+    handleNotifications,
+    checkout,
+    pay
+} = require("../controllers/index")
         
 // root route
 router.get("/", getLanding);
@@ -27,7 +29,7 @@ router.get("/", getLanding);
 router.get("/sign-up", getSignup);
 
 // handle signup logic
-router.post("/sign-up", asyncErrorHandler(postSignup));
+router.post("/sign-up", postSignup);
 
 // show login form
 router.get("/login", getLogin);
@@ -42,18 +44,24 @@ router.post("/login", postLogin);
 router.get("/logout", logout);
 
 // Logged in user's profile
-router.get("/profile/:id", asyncErrorHandler(getProfile)); 
+router.get("/profile/:id", getProfile); 
 
 // seeing user's profile
-router.get("/users/:id", asyncErrorHandler(seeOtherUserProfiles));
+router.get("/users/:id", seeOtherUserProfiles);
 
 // follow user
-router.get("/follow/:id", isLoggedIn, asyncErrorHandler(followUser));
+router.get("/follow/:id", isLoggedIn, followUser);
 
 // view all notifications
-router.get("/notifications", isLoggedIn, asyncErrorHandler(getNotifications));
+router.get("/notifications", isLoggedIn, getNotifications);
 
 // handle notifications
-router.get("/notifications/:id", isLoggedIn, asyncErrorHandler(handleNotifications));
+router.get("/notifications/:id", isLoggedIn, handleNotifications);
+
+//checkout
+router.get("/checkout", isLoggedIn, checkout);
+
+// POST pay
+router.post('/pay', isLoggedIn, pay);
 
 module.exports = router;
